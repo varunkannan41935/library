@@ -1,26 +1,21 @@
 import {Entity,PrimaryGeneratedColumn,Column,CreateDateColumn} from "typeorm"
 
 @Entity()
-export class Library {
+export class Users {
   @PrimaryGeneratedColumn()
-  bookId: number;
+  userId: number;
 
   @Column()
-  bookName: string;
+  userName: string;
 
   @Column()
-  authorName: string;
+  mailId: string;
 
   @Column()
-  language: string;
-
-  @Column()
-  genre: string;
+  password: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
-  availability: number;
 
 }

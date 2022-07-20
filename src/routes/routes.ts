@@ -36,7 +36,7 @@ server.post('/',async (req,res)=>{
 });
 
 server.put('/',async (req,res)=>{
-  const bookId = req.query;
+  const bookId = req.body.bookId;
     console.log('Requested query for the book updation',bookId); 
   
   const bookName = req.body.bookName;
@@ -54,11 +54,11 @@ server.put('/',async (req,res)=>{
 
 server.delete('/',async(req,res)=>{
   
- const queryParams = req.query;
-     console.log('Requested query for Book deletion',JSON.stringify(queryParams)) 
-     
- const deletebook = await server.db.library.delete ({where:{...queryParams}});
-     console.log('Deleted Book in the library',deletebook);
+  const queryParams = req.query;
+      console.log('Requested query for Book deletion',JSON.stringify(queryParams)) 
+      
+  const deletebook = await server.db.library.delete({...queryParams});
+      console.log('Deleted Book in the library',deletebook);
        
         return deletebook;
 });

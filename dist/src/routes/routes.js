@@ -22,7 +22,7 @@ function libraryroutes(server, options, done) {
         return book;
     });
     server.put('/', async (req, res) => {
-        const bookId = req.query;
+        const bookId = req.body.bookId;
         console.log('Requested query for the book updation', bookId);
         const bookName = req.body.bookName;
         const authorName = req.body.authorName;
@@ -37,7 +37,7 @@ function libraryroutes(server, options, done) {
     server.delete('/', async (req, res) => {
         const queryParams = req.query;
         console.log('Requested query for Book deletion', JSON.stringify(queryParams));
-        const deletebook = await server.db.library.delete({ where: { ...queryParams } });
+        const deletebook = await server.db.library.delete({ ...queryParams });
         console.log('Deleted Book in the library', deletebook);
         return deletebook;
     });
