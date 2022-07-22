@@ -5,14 +5,14 @@ const db = require('../db');
 
 
 
-export default function libraryroutes(server,options,done){
+export default function libraryRoutes(server,options,done){
 
 server.get('/',async(req,res)=>{
-  const book = await server.db.library.find();
+  const getBook = await server.db.library.find();
    
-    console.log('Getting Available books from the Library ', book)
+    console.log('Getting Available books from the Library ', getBook)
     
-      return book;
+      return getBook;
 });
 
 
@@ -29,10 +29,10 @@ server.post('/',async (req,res)=>{
   
    console.log('Book input for the post method',newbook)
   
- const book = await server.db.library.save(newbook)
-   console.log('New Book posted in the library ',book)  
+ const postBook = await server.db.library.save(newbook)
+   console.log('New Book posted in the library ',postBook)  
     
-    return book;
+    return postBook;
 });
 
 server.put('/',async (req,res)=>{
@@ -46,10 +46,10 @@ server.put('/',async (req,res)=>{
        const createdAt = new Date().toISOString();
         const availability = req.body.availability;
   
-  const book = await server.db.library.update(bookId,{bookName,authorName,language,genre,createdAt,availability});
-   console.log('updated book in the library',book)
+  const updateBook = await server.db.library.update(bookId,{bookName,authorName,language,genre,createdAt,availability});
+   console.log('updated book in the library',updateBook)
     
-     return book;
+     return updateBook;
 });
 
 server.delete('/',async(req,res)=>{
@@ -57,10 +57,10 @@ server.delete('/',async(req,res)=>{
   const queryParams = req.query;
       console.log('Requested query for Book deletion',JSON.stringify(queryParams)) 
       
-  const deletebook = await server.db.library.delete({...queryParams});
-      console.log('Deleted Book in the library',deletebook);
+  const deleteBook = await server.db.library.delete({...queryParams});
+      console.log('Deleted Book in the library',deleteBook);
        
-        return deletebook;
+        return deleteBook;
 });
 
 server.get('/getbook',async(req,res)=>{
@@ -69,11 +69,12 @@ server.get('/getbook',async(req,res)=>{
 
   const book = await server.db.library.find( { where: {...queryParams} } )
       console.log('Requested Book using the queryParameter',book);
-    
-   return book;
-})
-
-
+if(book.length == 0){
+  throw new Error('The Book is not available')}
+else{ 
+    return book;
+}    
+});
 
 done();
 }

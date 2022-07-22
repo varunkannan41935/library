@@ -1,19 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../db');
-function userroutes(fastify, options, done) {
+function userRoutes(fastify, options, done) {
     fastify.post('/newuser', async (req, res) => {
-        const newuser = {
+        const newUser = {
             userName: req.body.userName,
             mailId: req.body.mailId,
             password: req.body.password,
             createdAt: new Date()
         };
-        console.log('user Inputs', newuser);
-        //const userinfo = await fastify.db.userrecords.find({where:{}})
-        const users = await fastify.db.userrecords.save(newuser);
-        console.log('New user of the library ', users);
-        return users;
+        console.log('user Inputs', newUser);
+        const userInfo = await fastify.db.userrecords.find({ where: { mailId: newUser.mailId } });
+        console.log('if the mailId is already used', userInfo);
+        if (userInfo.length == 0) {
+            const users = await fastify.db.userrecords.save(newUser);
+            console.log('New user of the library ', users);
+            return users;
+        }
+        else {
+            throw new Error('Provided EmailId is already in use');
+        }
     });
     fastify.get('/getusers', async (req, res) => {
         const users = await fastify.db.userrecords.find();
@@ -37,6 +43,7 @@ function userroutes(fastify, options, done) {
         console.log('Deleted user', deleteuser);
         return deleteuser;
     });
+    done();
 }
-exports.default = userroutes;
-//# sourceMappingURL=userroutes.js.map
+exports.default = userRoutes;
+//# sourceMappingURL=user-routes.js.map

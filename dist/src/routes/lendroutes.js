@@ -10,13 +10,15 @@ function lendroutes(fastify, options, done) {
         console.log('POSTED BOOK : ', book);
         const books = await fastify.db.library.find({ where: { bookId: book.bookId } });
         console.log('Book from the library', books);
-        if (books.length != 0) {
+        const user = await fastify.db.userrecords.find({ where: { userId: book.userId } });
+        console.log('User from the userrecords', user);
+        if (books.length != 0 && user.length != 0) {
             const lendbook = await fastify.db.lendrecords.save(book);
             console.log('Lended Book', lendbook);
             return (lendbook);
         }
         else {
-            throw new Error('given bookId is not valid');
+            throw new Error('given bookId or userId is not valid');
         }
     });
     fastify.get('/getlendedbooks', (req, res) => {

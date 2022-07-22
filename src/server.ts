@@ -1,20 +1,23 @@
 const fastify = require('fastify')({logger:true})
 
 import { Library } from "./entity/books";
-import { Lend } from "./entity/lendrecords";
+import { Lend } from "./entity/lends";
 import { Users } from "./entity/users";
+import {Return } from "./entity/returns"
 
 import db from './db';
-import libraryroutes from './routes/routes';
-import lendroutes from './routes/lendroutes'; 
-import userroutes from './routes/userroutes';
+import libraryRoutes from './routes/library-routes';
+import lendRoutes from './routes/lend-routes'; 
+import userRoutes from './routes/user-routes';
+import returnRoutes from './routes/return-routes';
 
 fastify.register(db);
-fastify.register(libraryroutes);
-fastify.register(lendroutes);
-fastify.register(userroutes);
+fastify.register(libraryRoutes);
+fastify.register(lendRoutes);
+fastify.register(userRoutes);
+fastify.register(returnRoutes);
 
-fastify.listen(3001, '0.0.0.0',(err, address)=>{
+fastify.listen(3001,(err, address)=>{
 
 if(err){
 fastify.log.error('ERROR', err)

@@ -4,23 +4,30 @@ import { RequestGenericInterface } from 'fastify'
 const db = require('../db');
 
 
-export default function userroutes(fastify,options,done){
+export default function userRoutes(fastify,options,done){
 
 fastify.post('/newuser',async (req,res)=>{
 
-   const newuser = {
+  const newUser = {
                    userName: req.body.userName,
                    mailId: req.body.mailId,
                    password: req.body.password,
                    createdAt: new Date()
                    }
-
-   console.log('user Inputs',newuser)
-
- const users = await fastify.db.userrecords.save(newuser)
+   
+   console.log('user Inputs',newUser)
+  
+  const userInfo = await fastify.db.userrecords.find({where:{mailId:newUser.mailId}})
+     console.log('if the mailId is already used',userInfo)
+ 
+ if(userInfo.length == 0){ 
+  const users = await fastify.db.userrecords.save(newUser)
    console.log('New user of the library ',users)
-
-    return users;
+     return users;
+ }
+ else{
+ throw new Error('Provided EmailId is already in use');
+ }
 });
 
 fastify.get('/getusers',async (req,res)=>{
@@ -28,6 +35,8 @@ fastify.get('/getusers',async (req,res)=>{
       console.log('Users details',users)
    return users;
 });
+
+
 
 fastify.put('/updateuser',async (req,res)=>{
   const userId = req.body.userId;
@@ -43,6 +52,8 @@ fastify.put('/updateuser',async (req,res)=>{
      return updateuser;
 });
 
+
+
 fastify.delete('/deleteuser',async(req,res)=>{
 
   const queryParams = req.query;
@@ -54,4 +65,5 @@ fastify.delete('/deleteuser',async(req,res)=>{
         return deleteuser;
 });
 
+ done();
 }

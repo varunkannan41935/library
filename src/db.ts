@@ -2,8 +2,9 @@ import "reflect-metadata"
 import fp from "fastify-plugin"
 
 import { Library } from "./entity/books"
-import { Lend }    from "./entity/lendrecords"
+import { Lend }    from "./entity/lends"
 import { Users }   from "./entity/users"
+import { Return }  from "./entity/returns"
 
 import {createConnection,getConnectionOptions} from "typeorm"
 
@@ -12,7 +13,7 @@ export default fp(async server =>{
    const connectionOptions = await getConnectionOptions()
     Object.assign(connectionOptions,{
      synchronize: true,
-      entities: [Library,Lend,Users]
+      entities: [Library,Lend,Users,Return]
     })
     const connection = await createConnection(connectionOptions)
     console.log("connected to db")
@@ -20,7 +21,8 @@ export default fp(async server =>{
     server.decorate("db", {
        library: connection.getRepository(Library),
         lendrecords: connection.getRepository(Lend),
-         userrecords: connection.getRepository(Users)
+         userrecords: connection.getRepository(Users),
+          returnrecords: connection.getRepository(Return)
     } )
  }
    catch (error) {
