@@ -101,7 +101,7 @@ export default function lendRoutes(fastify, options, done) {
 					throw new Error("User Does Not Returned Any Books");
 				  }
                              } else if (findUser != null && checkUser == null){
-                                     throw new Error("User Does Not Lend Any Book To Return")
+                                     throw new Error("User Does Not Lend Any Book")
                                }
 		            }
 		} catch (e) {
