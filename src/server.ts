@@ -3,7 +3,6 @@ const fastify = require('fastify')({logger:true})
 import { Library } from "./entity/books";
 import { Lend } from "./entity/lends";
 import { Users } from "./entity/users";
-import {Return } from "./entity/returns"
 
 import db from './db';
 import libraryRoutes from './routes/library-routes';

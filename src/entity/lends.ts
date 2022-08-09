@@ -1,4 +1,4 @@
-import {Entity,PrimaryGeneratedColumn,Column,OneToOne,JoinColumn} from "typeorm"
+import {Entity,PrimaryGeneratedColumn,CreateDateColumn,Column} from "typeorm"
 
 
 @Entity()
@@ -12,10 +12,13 @@ export class Lend {
   @Column()
   bookId: Number;
 
-  @Column()
-  lendDate: String;
+  @CreateDateColumn()
+  lendDate: Date;
 
   @Column()
   returnDate: String;
 
+  @Column()
+  returned:boolean;
 }
+
