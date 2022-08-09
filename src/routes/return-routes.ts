@@ -70,38 +70,40 @@ export default function lendRoutes(fastify, options, done) {
 		try {
 			const userId = req.query.userId;
 			console.log("To Check The Input ->",typeof userId);
-      
-                        
-                        if(typeof userId == 'string'){
-                          const id = Number(userId)
+                  
+                        const id = Number(userId)
                           if(isNaN(id)){
                              throw new Error('Provide Required Input')
-                          }
-                        } else {
+                          } else {
+
                                const findUser = await userRepo.findOne({where:{userId}})
                                  console.log("To Check findUser ->",findUser);             
+                                  
+                               const checkUser = await lendRepo.findOne({where: { userId }});
+                                 console.log("To Check The Lend Id ->",checkUser);
 
-                                 if(findUser != null){
-       			       const checkUser = await lendRepo.find({where: { userId }});
- 				 console.log("To Check The Lend Id ->",checkUser);
-                                 
-                          
-				if (checkUser.length != 0) {
-                             const checkReturns = await lendRepo.find({where:{ userId,returned:true }})
+                               if(findUser == null && checkUser == null){
+                                     throw new Error( "User Id Not Valid" );
+                        
+                         } else if ( findUser != null &&  checkUser != null || findUser == null && checkUser !=null) {
+     
+                          const checkReturns = await lendRepo.find({where:{ userId,returned:true }})
 
-                               if(checkReturns.length != 0) {
+                                     if(checkReturns.length != 0) {
                      
 					return {
 						status: "SUCCESS",
-						data: checkReturns,
+				 		data: checkReturns,
 						message: "User Returns fetched successfully",
 					};
 
 				} else {
 					throw new Error("User Does Not Returned Any Books");
-				}}
-                               } else{ throw new Error( "User Id Not Valid" ); }
-		    }
+				  }
+                             } else if (findUser != null && checkUser == null){
+                                     throw new Error("User Does Not Lend Any Book To Return")
+                               }
+		            }
 		} catch (e) {
 			return {
 				status: "ERROR",

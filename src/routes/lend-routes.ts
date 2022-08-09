@@ -118,24 +118,22 @@ export default function lendRoutes(fastify, options, done) {
 			const userId = req.query.userId;
                         console.log("UserId as input queryParams ->", typeof userId); 
 
-                        
-                        if(typeof userId == 'string'){
                            const id =Number(userId)
                           if(isNaN(id)){
                              throw new Error('Provide Required Input')
-                          }
                         } else{
   
  			const findUser = await userRepo.findOneBy({ userId });
 			console.log("To Find The User Id Is In The User Repo ->",findUser);
 		   
-                        if (findUser != null){
-                         
-                             const booksLentByUser = await lendRepo.find({where:{userId}})
-                             console.log('Total Books lend by particular user ->',booksLentByUser)
-                     
-                        if(booksLentByUser.length !=0){
+                        const booksLentByUser = await lendRepo.findOne({where:{userId}})
+                        console.log('Total Books lend by particular user ->',booksLentByUser)
 
+                     if (findUser == null && booksLentByUser == null){
+                                     throw new Error( "Given User Id Is Not Valid");
+
+                      } else if(booksLentByUser != null){
+                   
                              const lendBooks = await lendRepo.findOne({where:{userId,returned:false}})
                         if(lendBooks != null){
  
@@ -150,9 +148,6 @@ export default function lendRoutes(fastify, options, done) {
                         } else{
                                throw new Error('The User Does Not Lend Any Books')
                           }     
-                        }  else{
-                                throw new Error( "Given User Id Is Not Valid");
-                           }      
                           } 
 		} catch (e) {
 			return {

@@ -210,13 +210,13 @@ export default function libraryRoutes(server, options, done) {
                         } else if ( queryParams.bookName == "" ) {
                                         throw new Error("Provide Required Input For bookName");
 
-                        } else if ( queryParams.authorName == "") {
+                        } else if ( queryParams.authroName == "" ) {
                                         throw new Error("Provide Required Input For authorName");
 
                         } else if ( queryParams.language == "" ) {
                                         throw new Error("Provide Required Input For language");
 
-                        } else if ( queryParams.genre == "" ) {
+                        } else if ( queryParams.genre == "") {
                                         throw new Error("Provide Required Input For mailId");
 
                         } else if ( queryParams.availability == 'string' ) {
@@ -224,7 +224,7 @@ export default function libraryRoutes(server, options, done) {
                                 if ( isNaN(availability) ) {
                                         throw new Error("Provide Required Input For availability");
                                 }
-                          }
+                          } 
  
 			const book = await libRepo.find({where: { ...queryParams }});
 			console.log("Requested Book ->",book);
