@@ -1,42 +1,104 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const db = require('../db');
-function returnRoutes(fastify, options, done) {
-    const libRepo = fastify.db.library;
-    const userRepo = fastify.db.userrecords;
+const db = require("../db");
+function lendRoutes(fastify, options, done) {
     const lendRepo = fastify.db.lendrecords;
-    const returnRepo = fastify.db.returnrecords;
-    fastify.post('/returnbook', async (req, res) => {
-        const book = {
-            lendId: req.body.lendId,
-            bookId: req.body.bookId,
-            returnDate: new Date()
-        };
-        const lendedBook = await lendRepo.findOne({ where: { lendId: book.lendId } });
-        const findLendedBook = await lendRepo.findOne({ where: { bookId: book.bookId } });
-        const checkUser = await returnRepo.findOne({ where: { lendId: book.lendId } });
-        if (findLendedBook != null && lendedBook != null) {
-            if (checkUser == null) {
-                const returnBook = await returnRepo.save(book);
-                console.log('returned Book by the user', returnBook);
-                const findBook = await libRepo.findOne({ where: { bookId: book.bookId } });
-                const availability = findBook.availability + 1;
-                const updatedBook = await libRepo.update(book.bookId, { availability });
-                return (returnBook);
+    const libRepo = fastify.db.librecords;
+    const userRepo = fastify.db.userrecords;
+    fastify.post("/returnbook", async (req, res) => {
+        try {
+            const lendId = req.body.lendId;
+            console.log("To Check The Input ->", lendId);
+            if (lendId == undefined) {
+                throw new Error("Provide Required Input");
+            }
+            const checkLendId = await lendRepo.findOne({ where: { lendId: lendId }, });
+            console.log("To Check The Lend Id ->", checkLendId);
+            if (checkLendId != null && checkLendId.returned == false) {
+                const updatedLendStatus = await lendRepo.update(lendId, { returned: true });
+                console.log("To Check The Updated Book In Return Record ->", updatedLendStatus);
+                return {
+                    status: "SUCCESS",
+                    data: updatedLendStatus,
+                    message: "The  Book Returned successfully",
+                };
+            }
+            else if (checkLendId != null && checkLendId.returned == true) {
+                throw new Error("The Book Is Already Returned");
             }
             else {
-                throw new Error('The Book is Already Returned');
+                throw new Error("The Provided LendId Is Not Valid");
             }
         }
-        else {
-            throw new Error('given book is not a lended one or the given bookId or userId is not valid');
+        catch (e) {
+            return {
+                status: "ERROR",
+                data: null,
+                message: e.message,
+            };
         }
     });
-    fastify.get('/getreturnedbooks', async (req, res) => {
-        const getreturnedBooks = await returnRepo.find();
-        return (getreturnedBooks);
+    fastify.get("/getreturnedbooks", async (req, res) => {
+        const getReturnedBooks = await lendRepo.find({ where: { returned: true } });
+        console.log("TO CHECK THE RETUEN RECORD ->", getReturnedBooks);
+        if (getReturnedBooks.length == 0) {
+            return {
+                status: "ERROR",
+                data: null,
+                message: "No Books Returned ",
+            };
+        }
+        else {
+            return {
+                status: "SUCCESS",
+                data: getReturnedBooks,
+                message: "The Total Returned Books Fetched successfully",
+            };
+        }
+    });
+    fastify.get("/getbooksreturnedbyuser", async (req, res) => {
+        try {
+            const userId = req.query.userId;
+            console.log("To Check The Input ->", typeof userId);
+            const id = Number(userId);
+            if (isNaN(id)) {
+                throw new Error('Provide Required Input');
+            }
+            else {
+                const findUser = await userRepo.findOne({ where: { userId } });
+                console.log("To Check findUser ->", findUser);
+                const checkUser = await lendRepo.findOne({ where: { userId } });
+                console.log("To Check The Lend Id ->", checkUser);
+                if (findUser == null && checkUser == null) {
+                    throw new Error("User Id Not Valid");
+                }
+                else if (findUser != null && checkUser != null || findUser == null && checkUser != null) {
+                    const checkReturns = await lendRepo.find({ where: { userId, returned: true } });
+                    if (checkReturns.length != 0) {
+                        return {
+                            status: "SUCCESS",
+                            data: checkReturns,
+                            message: "User Returns fetched successfully",
+                        };
+                    }
+                    else {
+                        throw new Error("User Does Not Returned Any Books");
+                    }
+                }
+                else if (findUser != null && checkUser == null) {
+                    throw new Error("User Does Not Lend Any Book");
+                }
+            }
+        }
+        catch (e) {
+            return {
+                status: "ERROR",
+                data: null,
+                message: e.message,
+            };
+        }
     });
     done();
 }
-exports.default = returnRoutes;
+exports.default = lendRoutes;
 //# sourceMappingURL=return-routes.js.map

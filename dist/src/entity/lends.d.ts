@@ -2,6 +2,7 @@ export declare class Lend {
     lendId: Number;
     userId: Number;
     bookId: Number;
-    lendDate: String;
+    lendDate: Date;
     returnDate: String;
+    returned: boolean;
 }

@@ -14,7 +14,6 @@ const typeorm_1 = require("typeorm");
 let Return = class Return {
     returnId;
     lendId;
-    userId;
     returnDate;
 };
 __decorate([
@@ -25,10 +24,6 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Return.prototype, "lendId", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Return.prototype, "userId", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", String)

@@ -17,6 +17,7 @@ let Lend = class Lend {
     bookId;
     lendDate;
     returnDate;
+    returned;
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
@@ -31,13 +32,17 @@ __decorate([
     __metadata("design:type", Number)
 ], Lend.prototype, "bookId", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
 ], Lend.prototype, "lendDate", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Lend.prototype, "returnDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Boolean)
+], Lend.prototype, "returned", void 0);
 Lend = __decorate([
     (0, typeorm_1.Entity)()
 ], Lend);
