@@ -11,7 +11,7 @@ export default fp(async (server) => {
 		const connectionOptions = await getConnectionOptions();
 		Object.assign(connectionOptions, {
 			synchronize: true,
-			entities: [Library, Lend, Users],
+			entities: [Library, Lend, Users,],
 		});
 		const connection = await createConnection(connectionOptions);
 		console.log("connected to db");

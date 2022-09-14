@@ -3,22 +3,26 @@ import {Entity,PrimaryGeneratedColumn,CreateDateColumn,Column} from "typeorm"
 
 @Entity()
 export class Lend {
-  @PrimaryGeneratedColumn()
-  lendId: Number;
+  @PrimaryGeneratedColumn("uuid")
+  lendId: string;
 
   @Column()
-  userId: Number;
+  userId: string;
   
   @Column()
-  bookId: Number;
+  bookName: string;
+  
+  @Column()
+  mailId:string
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   lendDate: Date;
 
-  @Column()
-  returnDate: String;
+  @Column({type:'timestamp'})
+  returnDate: string;
+  
 
-  @Column()
+  @Column({default:false})
   returned:boolean;
 }
 

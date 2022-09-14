@@ -2,8 +2,8 @@ import {Entity,PrimaryGeneratedColumn,Column,CreateDateColumn} from "typeorm"
 
 @Entity()
 export class Library {
-  @PrimaryGeneratedColumn()
-  bookId: number;
+  @PrimaryGeneratedColumn("uuid")
+  bookId: string;
 
   @Column()
   bookName: string;
@@ -17,10 +17,13 @@ export class Library {
   @Column()
   genre: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column( {default: 'available'})
+  availability: string;
 
   @Column()
-  availability: number;
+  donatedBy: string;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
 }

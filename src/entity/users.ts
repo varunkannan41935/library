@@ -2,20 +2,19 @@ import {Entity,PrimaryGeneratedColumn,Column,CreateDateColumn} from "typeorm"
 
 @Entity()
 export class Users {
-  @PrimaryGeneratedColumn()
-  userId: number;
-
-  @Column()
-  userName: string;
+  @PrimaryGeneratedColumn("uuid")
+  userId: string;
 
   @Column()
   mailId: string;
 
   @Column()
   password: string;
+ 
+  @Column()
+   role: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
-
 
 }
