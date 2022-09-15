@@ -16,13 +16,11 @@ export default function lendRoutes(fastify, options, done) {
 				userId: req.body.user.userId,
 				bookName: req.body.data.bookName,
 				mailId: req.body.user.mailId,
-				returnDate: req.body.data.returnDate,
+                                lendDate: Date(),
+                                returnDate: "Not Returned",
 			};
 			console.log("Input To lend a book ->", book);
 
-			if (JSON.stringify(book) == "{}") {
-				throw new Error(" Provide The Required Input");
-			}
 
 			Object.entries(book).forEach((entry) => {
 				const [bookKey, bookValue] = entry;
@@ -82,7 +80,7 @@ export default function lendRoutes(fastify, options, done) {
 		}
 	});
 
-	fastify.put("/updateduedate", async (req, res) => {
+	/**fastify.put("/updateduedate", async (req, res) => {
 		try {
 			const bookName = req.body.data.bookName;
 			const returnDate = req.body.data.returnDate;
@@ -117,7 +115,7 @@ export default function lendRoutes(fastify, options, done) {
 				message: e.message,
 			};
 		}
-	});
+	});**/
 
 	fastify.get("/lendedbooksbyuser", async (req, res) => {
 		try {

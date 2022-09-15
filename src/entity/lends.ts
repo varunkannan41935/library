@@ -15,10 +15,10 @@ export class Lend {
   @Column()
   mailId:string
 
-  @CreateDateColumn({ type: 'timestamp' })
-  lendDate: Date;
+  @Column()
+  lendDate: string;
 
-  @Column({type:'timestamp'})
+  @Column()
   returnDate: string;
   
 

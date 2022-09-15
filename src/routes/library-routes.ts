@@ -8,14 +8,14 @@ export default function libraryRoutes(fastify, options, done) {
 
 	fastify.post("/postbook", async (req, res) => {
 		try {
-			var newBook = {
+			const newBook = {
 				bookName: req.body.data.bookName,
 				authorName: req.body.data.authorName,
 				language: req.body.data.language,
 				genre: req.body.data.genre,
 				donatedBy: req.body.data.donatedBy,
 			};
-			console.log("Input Data To Post A Book ->", (newBook));
+			console.log("Input Data To Post A Book ->", (newBook.bookName));
 
 			if (JSON.stringify(newBook) === "{}") {
 				throw new Error("Invalid Input 0: Provide the Required Inputs");
@@ -37,7 +37,7 @@ export default function libraryRoutes(fastify, options, done) {
 
 						const [releventTypeKey,releventTypeValue] = type;
 
-						if (bookValue == undefined || bookValue.length == 0) {
+						if (bookValue == undefined || bookValue == 0 || !isNaN(bookValue) ) {
 							throw new Error(`Invalid Input : Provide Required Input for ${bookKey}`);
 
 						} else if (bookValue !== undefined && bookKey == releventTypeKey) {
@@ -137,25 +137,30 @@ export default function libraryRoutes(fastify, options, done) {
 
 				Object.entries(newBook).forEach((book) => {
 					const [bookKey, bookValue] = book;
-
-					if (bookValue != undefined && bookValue.length !== 0) {
+                                        
+					if (bookValue != undefined ) {
 						const newArr = [bookValue,releventTypeValue];
-
-						if (typeof newArr[0] != newArr[1]) {
-							console.log("input for updation -->",typeof newArr[0],newArr[1]);
+                                               
+						if (typeof newArr[0] != newArr[1] || !isNaN(newArr[0]) || newArr[0] == null || newArr[0] == 0) {
+					
 							throw new Error(`Invalid Input: Provide Required Input for ${bookKey}`);
 						}
 					}
 				});
 			});
 
-			const updateBook = await libRepo.update(findBook.bookId,{ ...newBook });
+                        const checkUpdate = await libRepo.findOne({where:{bookName , ...newBook}})
+                        console.log("To Check Update --->",checkUpdate);
+
+			const updateBook = await libRepo.update(findBook.bookId,{ ...newBook, createdAt: new Date() });
 			console.log("Updated Book ->", updateBook);
 			return {
 				status: "SUCCESS",
 				data: updateBook,
 				message: `The Book ${bookName} Updated successfully`,
 			};
+                        
+                        
 		} catch (e) {
 			return {
 				status: "ERROR",
@@ -173,7 +178,7 @@ export default function libraryRoutes(fastify, options, done) {
 			if (typeof bookName != "string") {
 				throw new Error("Invalid Input : Provide Required Input");
 			} else {
-				const getBook = await libRepo.findOne({where: { bookName :ILike(bookName)},});
+				const getBook = await libRepo.findOne({where: { bookName :(bookName)},});
 
 				if (getBook != null) {
 					const deleteBook = await libRepo.delete({ bookName });
@@ -185,7 +190,7 @@ export default function libraryRoutes(fastify, options, done) {
 						message: "The Book Deleted successfully",
 					};
 				} else {
-					throw new Error(`Invalid Input : The Book ${bookName} Is Not In The Library`);
+					throw new Error(`Invalid Input : Book Unavailable`);
 				}
 			}
 		} catch (e) {

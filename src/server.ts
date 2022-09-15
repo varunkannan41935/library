@@ -71,7 +71,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
                  console.log('-- To Check the Route ->',decoded.userInfo.role)
                      done(new Error ('Unauthorized User'));
                 }
-               done();
+               done(null,payload);
           }
 
 });

@@ -21,7 +21,7 @@ export default function userRoutes(fastify, options, done) {
                         console.log('mailId', typeof newUser.mailId)
 
 			Object.entries(newUser).forEach((entry) => {
-				const [newUserKey, newUserValue] = entry;
+				const [newUserKey, newUserValue]  = entry;
 
 
 				if (typeof newUserValue !== "string" || newUserValue == undefined || newUserValue.length == 0) {

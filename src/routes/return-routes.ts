@@ -13,6 +13,7 @@ export default function lendRoutes(fastify, options, done) {
 	fastify.post("/returnbook", async (req, res) => {
 		try {
 			const bookName = req.body.data.bookName;
+
                         const user = req.body.user    
   			console.log("To Check The Input ->", bookName);
                         console.log("To Check The user ->",user);   
@@ -37,7 +38,7 @@ export default function lendRoutes(fastify, options, done) {
 
                         if(lendInfo != null){
          
-                              const updateStatus = await lendRepo.update(lendInfo.lendId,{returned : true});
+                              const updateStatus = await lendRepo.update(lendInfo.lendId,{returnDate: Date(), returned : true});
     
                               const updateAvailability = await libRepo.update(findBook.bookId, {availability : "available" })
                                
