@@ -6,6 +6,7 @@ const fastify = require("fastify")({
 import { Library } from "./entity/books";
 import { Lend } from "./entity/lends";
 import { Users } from "./entity/users";
+import * as dotenv from "dotenv";
 
 import db from "./db";
 import libraryRoutes from "./routes/library-routes";
@@ -14,24 +15,23 @@ import userRoutes from "./routes/user-routes";
 import returnRoutes from "./routes/return-routes";
 
 fastify.register(db);
+fastify.register(libraryRoutes);
+fastify.register(lendRoutes);
+fastify.register(userRoutes);
+fastify.register(returnRoutes);
 
 const jwt = require("jsonwebtoken");
-require('dotenv').config;
-
-//export var decodedUser;
+dotenv.config();
 
 const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 	const token = req.headers.authorization;
 
-	console.log("HEADERS -->", req.headers);
-	console.log("Token -->", { token });
-	console.log("route -->", req.routerPath);
-	
+	console.log("Token -->", token );
+ 	console.log("Router Path -->", req.routerPath);
+
         const unauthorizedRoutes = [
 		"/usersignin",
-		"/usersignup",
-                
 	];
 
         if(unauthorizedRoutes.includes(req.routerPath)){
@@ -45,41 +45,34 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 			"/updatebook",
 			"/deletebook",
                         "/getusers",
-                        "/deleteusers",
+                        "/deleteuser",
                         "/getlendedbooks",
                         "/getreturnedbooks",
-                        "/issuebook",
-                        "/addadmin",
-                        "/changerole",
 		];
-		const decoded = jwt.verify(token,process.env.JWT);
-		console.log("Decoded Token -->", decoded.userInfo);
-                var decodedUser = decoded.userInfo;
-                const role = decoded.userInfo.role;
-                const payload = {};
-                Object.assign(payload, {data: req.body}); 
-                Object.assign(payload, {user: decodedUser});     
-  
-                req.body = payload;
-                console.log('REQ BODY ! -->',req.body)
-                console.log("User ->",decodedUser);
-                console.log("new payload data -->",payload);
-                console.log("Route -->", req.routerPath);
-                 
-                if(adminRoutes.includes(req.routerPath) && decoded.userInfo.role == 'user'){
+                
 
-                 console.log('-- To Check the Route ->',decoded.userInfo.role)
+		const decoded = jwt.verify(token,process.env.JWT);
+		console.log("Decoded Token -->", decoded);
+
+
+                var decodedUser = decoded.user;
+                const role = decoded.user.role;
+                const payload = {};
+                req.body = Object.assign(payload, {data: req.body}, {user: decodedUser}, );     
+  
+
+                console.log('REQ BODY -->',req.body)
+                console.log("User -->",decodedUser);
+                 
+               if(adminRoutes.includes(req.routerPath) && role == 'user'){
+
+                 console.log('-- To Check the Route ->',role)
                      done(new Error ('Unauthorized User'));
-                }
-               done(null,payload);
+               }
+               done();
           }
 
 });
-
-fastify.register(libraryRoutes);
-fastify.register(lendRoutes);
-fastify.register(userRoutes);
-fastify.register(returnRoutes);
 
 fastify.listen(3001, (err, address) => {
 	if (err) {

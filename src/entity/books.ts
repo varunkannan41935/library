@@ -23,7 +23,7 @@ export class Library {
   @Column()
   donatedBy: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  @Column()
+  createdAt: string;
 
 }

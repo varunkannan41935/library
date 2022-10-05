@@ -1,1 +1,1 @@
-export default function libraryRoutes(server: any, options: any, done: any): void;
+export default function libraryRoutes(fastify: any, options: any, done: any): void;

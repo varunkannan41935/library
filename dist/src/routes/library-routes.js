@@ -1,48 +1,44 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const typeorm_1 = require("typeorm");
 const db = require("../db");
-function libraryRoutes(server, options, done) {
-    const libRepo = server.db.library;
-    server.post("/", async (req, res) => {
+function libraryRoutes(fastify, options, done) {
+    const libRepo = fastify.db.library;
+    fastify.post("/postbook", async (req, res) => {
         try {
             const newBook = {
-                bookName: req.body.bookName,
-                authorName: req.body.authorName,
-                language: req.body.language,
-                genre: req.body.genre,
-                availability: req.body.availability,
+                bookName: req.body.data.bookName,
+                authorName: req.body.data.authorName,
+                language: req.body.data.language,
+                genre: req.body.data.genre,
+                donatedBy: req.body.data.donatedBy,
             };
-            console.log("Input Data To Post A Book ->", JSON.stringify(newBook));
+            console.log("Input Data To Post A Book ->", newBook);
             if (JSON.stringify(newBook) === "{}") {
-                throw new Error("Invalid Input : Provide the Required Inputs");
+                throw new Error("Invalid Input 0: Provide the Required Inputs");
             }
-            if (typeof newBook.bookName !== "string" || !newBook.bookName) {
-                throw new Error("Invalid Input : Provide The Required Input For BookName");
-            }
-            if (typeof newBook.authorName !== "string" || !newBook.authorName) {
-                throw new Error("Invalid Input : Provide The Required Input For AuthorName");
-            }
-            if (typeof newBook.language !== "string" || !newBook.language) {
-                throw new Error("Invalid Input : Provide The Required Input For Language");
-            }
-            if (typeof newBook.genre !== "string" || !newBook.genre) {
-                throw new Error("Invalid Input : Provide The Required Input For Genre");
-            }
-            if (typeof newBook.availability !== "number" || !newBook.availability) {
-                throw new Error("Invalid Input : Provide The Required Input For Availability");
-            }
-            const getBook = await libRepo.findOne({ where: { bookName: newBook.bookName } });
+            Object.entries(newBook).forEach((book) => {
+                const [bookKey, bookValue] = book;
+                if (bookValue == undefined || bookValue == null || !isNaN(bookValue)) {
+                    throw new Error(`Invalid Input : Provide Required input for ${bookKey}`);
+                }
+                else if (bookValue !== undefined && typeof bookValue !== "string" || bookValue == 0) {
+                    throw new Error(`Invalid Input : Provide Required input for ${bookKey}`);
+                }
+            });
+            const getBook = await libRepo.findOne({ where: { bookName: (0, typeorm_1.ILike)(newBook.bookName) } });
+            console.log("To Check The Book Is Already In The library -->", getBook);
             if (getBook == null) {
                 const postBook = await libRepo.save(newBook);
                 console.log("New Book posted in the library -> ", postBook);
                 return {
                     status: "SUCCESS",
                     data: postBook,
-                    message: "The Book created successfully",
+                    message: `${newBook.bookName} book posted  successfully`,
                 };
             }
             else {
-                throw new Error("Invalid Input : The Book Is Already In The Library");
+                throw new Error(`Invalid Input : ${newBook.bookName} Is Already In The Library`);
             }
         }
         catch (e) {
@@ -53,7 +49,7 @@ function libraryRoutes(server, options, done) {
             };
         }
     });
-    server.get("/", async (req, res) => {
+    fastify.get("/getallbooks", async (req, res) => {
         const getBooks = await libRepo.find();
         console.log("Getting Available books from the Library ", getBooks);
         if (getBooks.length != 0) {
@@ -67,64 +63,50 @@ function libraryRoutes(server, options, done) {
             return {
                 status: "ERROR",
                 data: null,
-                message: "There Are No Books In The library",
+                message: "No Books are there In The library",
             };
         }
     });
-    server.put("/", async (req, res) => {
+    fastify.put("/updatebook", async (req, res) => {
         try {
-            const bookId = req.body.bookId;
-            console.log("Query for the book updation ->", bookId);
-            if (typeof bookId !== "number" || !bookId) {
-                throw new Error("Invalid Input : Provide The Required Input For BookId");
+            const bookName = req.body.data.bookName;
+            console.log("Query for the book updation ->", bookName);
+            if (typeof bookName !== "string" || !bookName) {
+                throw new Error("Invalid Input : Provide The Required Input For BookName");
             }
             const newBook = {
-                bookName: req.body.bookName,
-                authorName: req.body.authorName,
-                language: req.body.language,
-                genre: req.body.genre,
-                availability: req.body.availability,
+                authorName: req.body.data.authorName,
+                language: req.body.data.language,
+                genre: req.body.data.genre,
+                donatedBy: req.body.data.donatedBy,
             };
-            console.log(`Input's For Updation ->`, newBook);
-            const findBook = await libRepo.findOne({ where: { bookId: bookId } });
+            console.log(`Input's For Updation --->`, newBook);
+            const findBook = await libRepo.findOne({ where: { bookName: (0, typeorm_1.ILike)(bookName) }, });
             console.log("To find the book For Updation is in the library ->", findBook);
-            if (findBook == null) {
-                throw new Error("The Book Is Not Found In The Library");
+            if (findBook.length == 0) {
+                throw new Error(`The Book ${bookName} Is Not Found In The Library`);
             }
             if (JSON.stringify(newBook) === "{}") {
                 throw new Error("Invalid Input : Provide the Required Inputs For Book Updation");
             }
-            if (newBook.bookName != undefined || newBook.bookName === null) {
-                if (typeof newBook.bookName != "string") {
-                    throw new Error("Provide Required Input For bookName");
+            Object.entries(newBook).forEach((book) => {
+                const [bookKey, bookValue] = book;
+                if (bookValue != undefined && bookValue != null) {
+                    console.log('------>', bookValue == 0);
+                    if (typeof book[1] != "string" || !isNaN(bookValue) || bookValue == 0) {
+                        throw new Error(`Invalid Input: Provide Required Input for ${bookKey}`);
+                    }
                 }
-            }
-            else if (newBook.authorName != undefined || newBook.authorName === null) {
-                if (typeof newBook.authorName != "string") {
-                    throw new Error("Provide Required Input For authorName");
-                }
-            }
-            else if (newBook.language != undefined || newBook.language === null) {
-                if (typeof newBook.language != "string") {
-                    throw new Error("Provide Required Input For language");
-                }
-            }
-            else if (newBook.genre != undefined || newBook.genre === null) {
-                if (typeof newBook.genre != "string") {
-                    throw new Error("Provide Required Input For mailId");
-                }
-            }
-            else if (newBook.availability != undefined || newBook.availability === null) {
-                if (typeof newBook.availability == "number") {
-                    newBook.availability = findBook.availability + newBook.availability;
-                }
-            }
-            const updateBook = await libRepo.update(bookId, { ...newBook });
+            });
+            const updateBook = await libRepo.update(findBook.bookId, { ...newBook, createdAt: new Date() });
             console.log("Updated Book ->", updateBook);
+            const updatedBook = await libRepo.findOne({ where: { bookName, donatedBy: newBook.donatedBy } });
+            console.log('=------------->', updatedBook);
             return {
                 status: "SUCCESS",
-                data: updateBook,
-                message: "The Book Updated successfully",
+                data: findBook,
+                updatedData: updatedBook,
+                message: `The Book ${bookName} Updated successfully`,
             };
         }
         catch (e) {
@@ -135,29 +117,26 @@ function libraryRoutes(server, options, done) {
             };
         }
     });
-    server.delete("/", async (req, res) => {
+    fastify.delete("/deletebook", async (req, res) => {
         try {
-            const bookId = req.query.bookId;
-            console.log('Input Query ->', Number(bookId));
-            if (typeof bookId == 'string') {
-                const id = Number(bookId);
-                if (isNaN(id)) {
-                    throw new Error('Provide Required Input');
+            const bookName = req.query.bookName;
+            console.log("Input Query ->", bookName);
+            if (typeof bookName != "string") {
+                throw new Error("Invalid Input : Provide Required Input");
+            }
+            else {
+                const getBook = await libRepo.findOne({ where: { bookName: (bookName) }, });
+                if (getBook != null) {
+                    const deleteBook = await libRepo.delete({ bookName });
+                    console.log("Deleted Book ->", deleteBook);
+                    return {
+                        status: "SUCCESS",
+                        data: deleteBook,
+                        message: "The Book Deleted successfully",
+                    };
                 }
                 else {
-                    const getBook = await libRepo.findOne({ where: { bookId: id } });
-                    if (getBook != null) {
-                        const deleteBook = await libRepo.delete({ bookId: id });
-                        console.log("Deleted Book ->", deleteBook);
-                        return {
-                            status: "SUCCESS",
-                            data: deleteBook,
-                            message: "The Book Deleted successfully",
-                        };
-                    }
-                    else {
-                        throw new Error("Invalid Input : The Book Is Not In The Library");
-                    }
+                    throw new Error(`Invalid Input : Book Unavailable`);
                 }
             }
         }
@@ -169,59 +148,28 @@ function libraryRoutes(server, options, done) {
             };
         }
     });
-    server.get("/getbook", async (req, res) => {
+    fastify.get("/getbookbyquery", async (req, res) => {
         try {
             const queryParams = {
-                bookId: req.query.bookId,
                 bookName: req.query.bookName,
                 authorName: req.query.authorName,
                 genre: req.query.genre,
-                language: req.query.language,
                 availability: req.query.availability,
             };
-            console.log("Input data to get book from library -> ", JSON.stringify(queryParams));
-            console.log("Input data ---> ", Object.keys(queryParams).length);
-            if (Object.values(queryParams) === 'undefined') {
+            console.log("Input data to get book from library -> ", queryParams);
+            if (JSON.stringify(queryParams) === "{}") {
                 throw new Error("Invalid Input : Provide the Required Inputs");
-            }
-            if (queryParams.bookId == '') {
-                throw new Error("Provide Required Input For bookId");
-            }
-            else if (typeof queryParams.bookId == 'string') {
-                const bookId = Number(queryParams.bookId);
-                console.log('String to Number->', bookId);
-                if (isNaN(bookId)) {
-                    throw new Error("Provide Required Input For bookId");
-                }
-            }
-            else if (queryParams.bookName == "") {
-                throw new Error("Provide Required Input For bookName");
-            }
-            else if (queryParams.authorName == "") {
-                throw new Error("Provide Required Input For authorName");
-            }
-            else if (queryParams.language == "") {
-                throw new Error("Provide Required Input For language");
-            }
-            else if (queryParams.genre == "") {
-                throw new Error("Provide Required Input For mailId");
-            }
-            else if (queryParams.availability == 'string') {
-                const availability = Number(queryParams.availability);
-                if (isNaN(availability)) {
-                    throw new Error("Provide Required Input For availability");
-                }
             }
             const book = await libRepo.find({ where: { ...queryParams } });
             console.log("Requested Book ->", book);
             if (book.length == 0) {
-                throw new Error("The Requested Book Is Not Available ");
+                throw new Error(`The Request Is Not Available`);
             }
             else {
                 return {
                     status: "SUCCESS",
                     data: book,
-                    message: "The Requested Book is fetched successfully",
+                    message: "The Requested Book fetched successfully",
                 };
             }
         }
@@ -233,6 +181,22 @@ function libraryRoutes(server, options, done) {
             };
         }
     });
+    /**fastify.put("/giftedbook",async (req,res) => {
+            try{
+                  const bookName = req.body.data.bookname,
+                  const user = req.body.user
+                        
+                  const findBook = await libRepo.findOne({where: {bookName}})
+                  
+                  if(findBook == null){
+                         throw new Error(`The Book ${bookName} is not in the library`)
+                  }
+
+                  const giftBook = await libRepo.update(user.userId,{ gifted : "Gifted" })
+                  
+            }
+    
+    });**/
     done();
 }
 exports.default = libraryRoutes;

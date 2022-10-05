@@ -1,7 +1,7 @@
 export declare class Users {
-    userId: number;
-    userName: string;
+    userId: string;
     mailId: string;
     password: string;
+    role: string;
     createdAt: Date;
 }

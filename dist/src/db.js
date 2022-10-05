@@ -13,7 +13,7 @@ exports.default = (0, fastify_plugin_1.default)(async (server) => {
         const connectionOptions = await (0, typeorm_1.getConnectionOptions)();
         Object.assign(connectionOptions, {
             synchronize: true,
-            entities: [books_1.Library, lends_1.Lend, users_1.Users],
+            entities: [books_1.Library, lends_1.Lend, users_1.Users,],
         });
         const connection = await (0, typeorm_1.createConnection)(connectionOptions);
         console.log("connected to db");

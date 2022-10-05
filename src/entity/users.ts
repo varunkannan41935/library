@@ -5,16 +5,16 @@ export class Users {
   @PrimaryGeneratedColumn("uuid")
   userId: string;
 
-  @Column()
+  @Column({unique : true})
   mailId: string;
 
   @Column()
-  password: string;
- 
-  @Column()
-   role: string;
+  role: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  @Column()
+  createdAt: string;
+
+  @Column({nullable : true, default : 0})
+  visitCount: number;
 
 }

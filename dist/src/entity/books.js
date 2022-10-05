@@ -17,12 +17,13 @@ let Library = class Library {
     authorName;
     language;
     genre;
-    createdAt;
     availability;
+    donatedBy;
+    createdAt;
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
 ], Library.prototype, "bookId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
@@ -41,13 +42,17 @@ __decorate([
     __metadata("design:type", String)
 ], Library.prototype, "genre", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
-], Library.prototype, "createdAt", void 0);
+    (0, typeorm_1.Column)({ default: 'available' }),
+    __metadata("design:type", String)
+], Library.prototype, "availability", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Library.prototype, "availability", void 0);
+    __metadata("design:type", String)
+], Library.prototype, "donatedBy", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], Library.prototype, "createdAt", void 0);
 Library = __decorate([
     (0, typeorm_1.Entity)()
 ], Library);

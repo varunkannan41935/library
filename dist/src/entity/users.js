@@ -13,19 +13,15 @@ exports.Users = void 0;
 const typeorm_1 = require("typeorm");
 let Users = class Users {
     userId;
-    userName;
     mailId;
     password;
+    role;
     createdAt;
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
-], Users.prototype, "userId", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
     __metadata("design:type", String)
-], Users.prototype, "userName", void 0);
+], Users.prototype, "userId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -35,7 +31,11 @@ __decorate([
     __metadata("design:type", String)
 ], Users.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Users.prototype, "role", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], Users.prototype, "createdAt", void 0);
 Users = __decorate([

@@ -14,33 +14,38 @@ const typeorm_1 = require("typeorm");
 let Lend = class Lend {
     lendId;
     userId;
-    bookId;
+    bookName;
+    mailId;
     lendDate;
     returnDate;
     returned;
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
 ], Lend.prototype, "lendId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], Lend.prototype, "userId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Lend.prototype, "bookId", void 0);
+    __metadata("design:type", String)
+], Lend.prototype, "bookName", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Lend.prototype, "mailId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], Lend.prototype, "lendDate", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Lend.prototype, "returnDate", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], Lend.prototype, "returned", void 0);
 Lend = __decorate([

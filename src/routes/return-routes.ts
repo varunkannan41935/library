@@ -19,7 +19,7 @@ export default function lendRoutes(fastify, options, done) {
                         console.log("To Check The user ->",user);   
                         console.log("REQ BODY",req.body);  
 
-			if (bookName == undefined || bookName.length === 0) {
+			if (bookName == undefined || bookName.trim().length === 0) {
 				throw new Error("Invalid Input : Provide Required Input");
 			}
                         

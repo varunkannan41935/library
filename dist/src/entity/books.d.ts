@@ -1,9 +1,10 @@
 export declare class Library {
-    bookId: number;
+    bookId: string;
     bookName: string;
     authorName: string;
     language: string;
     genre: string;
+    availability: string;
+    donatedBy: string;
     createdAt: Date;
-    availability: number;
 }

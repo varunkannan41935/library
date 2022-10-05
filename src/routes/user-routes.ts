@@ -1,165 +1,95 @@
 import { getRepository } from "typeorm";
 import { Users } from "../entity/users";
 import { RequestGenericInterface } from "fastify";
-import bcrypt from "bcryptjs";
+import * as dotenv from 'dotenv';
 const db = require("../db");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+dotenv.config();
 
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
+
+
+
 	fastify.post("/usersignin", async (req, res) => {
-		try {
-			const newUser = {
-				mailId: req.body.mailId,
-				password: req.body.password,
-				role: "user",
-			};
-			newUser.password = await bcrypt.hash(newUser.password,8);
-			console.log("Hashed Password ->", newUser.password);
-                        console.log('mailId', typeof newUser.mailId)
+	
+               /*const token = req.headers.authorization; 
+  
+ 		const decodedToken = jwt.verify(token,secret_key);
+ 
+                const user = {
+                             mailId : decodedToken.email,
+                             role :  'user',
+                             createdAt : Date(),
+                            
+                };*/
+ 
+                const user = {
+                             mailId: req.body.mailId,
+                             role: 'user',
+                             createdAt : Date(),
+                };
+                console.log('USER', user)                    
+                let token = {};
+           
+ 
+                const findUser = await userRepo.findOne({where: {mailId : user.mailId}})
+                console.log('TO FIND THE USER IS ALREADY IN DB --->',findUser);
+                
+                if (findUser == null) {
 
-			Object.entries(newUser).forEach((entry) => {
-				const [newUserKey, newUserValue]  = entry;
+                const addUser = await userRepo.save(user);
+                console.log('NEW USER  ------->',addUser);
+                
+                token = jwt.sign({ user : addUser },process.env.JWT,{ expiresIn: "86400s" });
+                console.log('TOKEN -->',{ token });
 
 
-				if (typeof newUserValue !== "string" || newUserValue == undefined || newUserValue.length == 0) {
-                                                                                     
-					throw new Error("Invalid Input : Provide Required Input");
-				}
-			});
+                } else {
 
-			const userInfo = await userRepo.findOne({where: { mailId: newUser.mailId }});
+                       const updateVisit = await userRepo.update(findUser.userId,{visitCount : findUser.visitCount + 1})
 
-			if (userInfo == null) {
-				const users = await userRepo.save(newUser);
-				console.log("New user of the library --->",users);
+                       token = jwt.sign({ user : findUser },process.env.JWT,{ expiresIn: "86400s" });
+                       console.log('TOKEN -->',{ token });
+                 
+                  }
 
-				return {
-					status: "SUCCESS",
-					data: users,
-					message: "The User registered successfully",
-				};
-			} else {
-				throw new Error("The Provided MailId Is Already In Use");
-			}
-		} catch (e) {
-			return {
-				status: "ERROR",
-				data: null,
-				message: e.message,
-			};
-		}
+                 console.log("TOKEN -------->",token)
+
+
+                return {
+                       status : 'SUCCESS',
+                       data : token
+                }
+			
 	});
 
-	fastify.post("/usersignup", async (req, res) => {
-		try {
-			const newUser = {
-				mailId: req.body.mailId,
-				password: req.body.password,
-			};
-			console.log("Input ->", newUser);
+        fastify.get("/getusers", async (req,res) => {
+                      
+                const findUsers = await userRepo.find();
+                console.log('AVAILABLE USERS --->',findUsers);
 
-			Object.entries(newUser).forEach((entry) => {
-				const [newUserKey, newUserValue] = entry;
-				console.log("post user->", entry);
+                if (findUsers.length != 0){
+                       return {
+                              status: 'SUCCESS',
+                              data: findUsers,
+                              message: 'The Users fetched Successfully'
+                       } 
 
-				if (typeof newUserValue !== "string" || newUserValue == undefined) {
-					throw new Error("Invalid Input : Provide Required Input");
-				}
-			});
+                }
+               
 
-			const userInfo = await userRepo.findOne({where: { mailId: newUser.mailId }});
+        });
+   
+        fastify.delete("/deleteuser", async(req,res) => {
+ 
+                try{
+                   const mailId = req.query.mailId.trim();
+                   console.log('user to be deleted --->',mailId);                
 
-			if (!userInfo) {
-				throw new Error("Invalid Credential : Invalid MailId");
-			} else {
-				const passwordCompare = await bcrypt.compare(newUser.password,userInfo.password);
-
-				console.log("To Check User info",passwordCompare);
-				console.log("Input Password -->",newUser.password);
-				console.log("Hashed Password In The DB -->",userInfo.password);
-
-				if (passwordCompare === true) {
-					const token = jwt.sign({ userInfo },process.env.JWT,{ expiresIn: "86400s" });
-
-					console.log('TOKEN -->',{ token });
-					return {
-						status: "SUCCESS",
-						data: { token },
-					};
-				} else {
-					throw new Error("Invalid Input : Invalid Password");
-				}
-			}
-		} catch (e) {
-			return {
-				status: "ERROR",
-				data: null,
-				message: e.message,
-			};
-		}
-	});
-
-	fastify.put("/updateuser", async (req, res) => {
-		try {
-			var userPassword = req.body.data.password;
-                        const user = req.body.user;
-
-			console.log("Input For Updation", user);
-			console.log("userId -->", user.userId);
-			userPassword = await bcrypt.hash(userPassword, 8);
-			console.log("Hashed Password ->", userPassword);
-
-			const findUser = await userRepo.findOne({where: { mailId: user.mailId },});
-			console.log( "To find the user in the db -->",findUser,user.mailId );
-
-			if (findUser != null) {
-				const updateUser = await userRepo.update(user.userId,{ password: userPassword });
-				console.log("updated user credentials ->",updateUser);
-
-				return {
-					status: "SUCCESS",
-					data: updateUser,
-					message: `The User's password updated successfully`,
-				};
-			} else {
-				throw new Error("The User Is Not Found");
-			}
-		} catch (e) {
-			return {
-				status: "ERROR",
-				data: null,
-				message: e.message,
-			};
-		}
-	});
-
-	fastify.get("/getusers", async (req, res) => {
-		const users = await userRepo.find();
-		console.log("Users details", users);
-
-		if (users.length != 0) {
-			return {
-				status: "SUCCESS",
-				data: users,
-				message: "The Users Fetched successfully",
-			};
-		} else {
-			return {
-				status: "ERROR",
-				data: null,
-				message: "There Are No Users Available",
-			};
-		}
-	});
-
-	fastify.delete("/deleteuser", async (req, res) => {
-		try {
-			const mailId = req.query.mailId;
-
-			if (!mailId || typeof mailId != "string") {
+   
+                   if (!mailId || typeof mailId != "string") {
 				throw new Error("Invalid Input : Provide Required Input");
 			}
 
@@ -170,8 +100,8 @@ export default function userRoutes(fastify, options, done) {
 				const deleteUser = await userRepo.delete({mailId});
 				return {
 					status: "SUCCESS",
-					data: deleteUser,
-					message: `The User Deleted Successfully`,
+					data: findUser,
+					message: `The User ${findUser.mailId} Deleted Successfully`,
 				};
 			} else {
 				throw new Error("User Not Found");
@@ -184,71 +114,6 @@ export default function userRoutes(fastify, options, done) {
 			};
 		}
 	});
-
-	/**fastify.post("/addadmin", async (req, res) => {
-		try {
-			const adminInfo = {
-				mailId: req.body.data.mailId,
-				password: "password",
-				role: "admin",
-			};
-
-			adminInfo.password = await bcrypt.hash(adminInfo.password,8);
-			console.log("Hashed Password ->", adminInfo.password);
-
-			Object.entries(adminInfo).forEach((entry) => {
-				const [key, value] = entry;
-				console.log(`Input values ->`, value);
-
-				if (typeof value !== "string" || value == undefined) {
-					throw new Error("Invalid Input : Provide Required Input");
-				}
-			});
-
-			const admin = await userRepo.save(adminInfo);
-			console.log("Admin ->", admin);
-
-			return {
-				status: "SUCCESS",
-				data: admin,
-				message: `${adminInfo.mailId} Successfully Added as Admin`,
-			};
-		} catch (e) {
-			return {
-				status: "ERROR",
-				data: null,
-				message: e.message,
-			};
-		}
-	});
-
-	fastify.post("/updaterole", async (req, res) => {
-		try {
-			const user = req.body.data.mailId;
-			console.log("user whose role to be changed ->", user);
-
-			const findUser = await userRepo.findOne({where: { mailId: user },});
-			console.log("To find the user ->", findUser);
-
-			if (findUser != null) {
-				const updatedRole = await userRepo.update(findUser.userId,{ role: "admin" });
-
-				return {
-					status: "SUCCESS",
-					data: updatedRole,
-					message: `user ${user} role updated successfully`,
-				};
-			} else {
-				throw new Error(`user ${user} is unidentified`);
-			}
-		} catch (e) {
-			return {
-				status: "ERROR",
-				data: null,
-				message: e.message,
-			};
-		}
-	});**/
 
 	done();
 }

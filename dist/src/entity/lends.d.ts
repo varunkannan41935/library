@@ -1,8 +1,9 @@
 export declare class Lend {
-    lendId: Number;
-    userId: Number;
-    bookId: Number;
-    lendDate: Date;
-    returnDate: String;
+    lendId: string;
+    userId: string;
+    bookName: string;
+    mailId: string;
+    lendDate: string;
+    returnDate: string;
     returned: boolean;
 }
