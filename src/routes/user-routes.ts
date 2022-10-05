@@ -85,7 +85,7 @@ export default function userRoutes(fastify, options, done) {
         fastify.delete("/deleteuser", async(req,res) => {
  
                 try{
-                   const mailId = req.query.mailId.trim();
+                   const mailId = req.query.mailId;
                    console.log('user to be deleted --->',mailId);                
 
    
