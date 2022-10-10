@@ -32,6 +32,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
         const unauthorizedRoutes = [
 		"/usersignin",
+                "/usersignup",
 	];
 
         if(unauthorizedRoutes.includes(req.routerPath)){
@@ -55,8 +56,8 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 		console.log("Decoded Token -->", decoded);
 
 
-                var decodedUser = decoded.user;
-                const role = decoded.user.role;
+                var decodedUser = decoded.userInfo;
+                const role = decoded.userInfo.role;
                 const payload = {};
                 req.body = Object.assign(payload, {data: req.body}, {user: decodedUser}, );     
   

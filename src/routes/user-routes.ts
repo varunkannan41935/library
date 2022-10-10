@@ -2,6 +2,7 @@ import { getRepository } from "typeorm";
 import { Users } from "../entity/users";
 import { RequestGenericInterface } from "fastify";
 import * as dotenv from 'dotenv';
+const bcrypt = require('bcrypt');
 const db = require("../db");
 const jwt = require("jsonwebtoken");
 dotenv.config();
@@ -9,12 +10,103 @@ dotenv.config();
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
-
-
-
 	fastify.post("/usersignin", async (req, res) => {
+		try {
+			const newUser = {
+				mailId: req.body.mailId,
+				password: req.body.password,
+				role: "user",
+				createdAt: Date(),
+			};
+			newUser.password = await bcrypt.hash(newUser.password,8);
+			console.log("Hashed Password ->", newUser.password);
+                        console.log('mailId', typeof newUser.mailId)
+
+			Object.entries(newUser).forEach((entry) => {
+				const [newUserKey, newUserValue]  = entry;
+
+
+				if (typeof newUserValue !== "string" || newUserValue == undefined || newUserValue.length == 0) {
+
+					throw new Error("Invalid Input : Provide Required Input");
+				}
+			});
+
+			const userInfo = await userRepo.findOne({where: { mailId: newUser.mailId }});
+
+			if (userInfo == null) {
+				const users = await userRepo.save(newUser);
+				console.log("New user of the library --->",users);
+
+				return {
+					status: "SUCCESS",
+					data: users,
+					message: "The User registered successfully",
+				};
+			} else {
+				throw new Error("The Provided MailId Is Already In Use");
+			}
+		} catch (e) {
+			return {
+				status: "ERROR",
+				data: null,
+				message: e.message,
+			};
+		}
+	});
+
+	fastify.post("/usersignup", async (req, res) => {
+		try {
+			const newUser = {
+				mailId: req.body.mailId,
+				password: req.body.password,
+			};
+			console.log("Input ->", newUser);
+
+			Object.entries(newUser).forEach((entry) => {
+				const [newUserKey, newUserValue] = entry;
+				console.log("post user->", entry);
+
+				if (typeof newUserValue !== "string" || newUserValue == undefined) {
+					throw new Error("Invalid Input : Provide Required Input");
+				}
+			});
+
+			const userInfo = await userRepo.findOne({where: { mailId: newUser.mailId }});
+
+			if (!userInfo) {
+				throw new Error("Invalid Credential : Invalid MailId");
+			} else {
+				const passwordCompare = await bcrypt.compare(newUser.password,userInfo.password);
+
+				console.log("To Check User info",passwordCompare);
+				console.log("Input Password -->",newUser.password);
+				console.log("Hashed Password In The DB -->",userInfo.password);
+
+				if (passwordCompare === true) {
+					const token = jwt.sign({ userInfo },process.env.JWT,{ expiresIn: "86400s" });
+
+					console.log('TOKEN -->',{ token });
+					return {
+						status: "SUCCESS",
+						data: { token },
+					};
+				} else {
+					throw new Error("Invalid Input : Invalid Password");
+				}
+			}
+		} catch (e) {
+			return {
+				status: "ERROR",
+				data: null,
+				message: e.message,
+			};
+		}
+	});
+        
+	/**fastify.post("/usersignin", async (req, res) => {
 	
-               /*const token = req.headers.authorization; 
+               const token = req.headers.authorization; 
   
  		const decodedToken = jwt.verify(token,secret_key);
  
@@ -23,7 +115,7 @@ export default function userRoutes(fastify, options, done) {
                              role :  'user',
                              createdAt : Date(),
                             
-                };*/
+                };
  
                 const user = {
                              mailId: req.body.mailId,
@@ -63,7 +155,7 @@ export default function userRoutes(fastify, options, done) {
                        data : token
                 }
 			
-	});
+	});**/
 
         fastify.get("/getusers", async (req,res) => {
                       

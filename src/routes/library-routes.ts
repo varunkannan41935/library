@@ -55,7 +55,7 @@ export default function libraryRoutes(fastify, options, done) {
 	});
 
 	fastify.get("/getallbooks", async (req, res) => {
-		const getBooks = await libRepo.find( bookName );
+		const getBooks = await libRepo.find();
 		console.log("Getting Available books from the Library ",getBooks);
 
 		if (getBooks.length != 0) {

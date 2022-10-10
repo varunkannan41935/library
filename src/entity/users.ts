@@ -5,8 +5,11 @@ export class Users {
   @PrimaryGeneratedColumn("uuid")
   userId: string;
 
-  @Column({unique : true})
+  @Column()
   mailId: string;
+
+  @Column()
+  password: string;
 
   @Column()
   role: string;
@@ -14,7 +17,7 @@ export class Users {
   @Column()
   createdAt: string;
 
-  @Column({nullable : true, default : 0})
-  visitCount: number;
+  //@Column({nullable : true, default : 0})
+  //visitCount: number;
 
 }

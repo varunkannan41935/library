@@ -13,8 +13,6 @@ export default function lendRoutes(fastify, options, done) {
 	fastify.post("/lendbook", async (req, res) => {
 		try {
 
-
-
 			const book = {
 				userId: req.body.user.userId,
 				bookName: req.body.data.bookName,
