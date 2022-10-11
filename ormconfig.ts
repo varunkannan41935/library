@@ -1,5 +1,5 @@
 module.exports = {
-        production: false,
+        production: true,
         type: "postgres",
         port: process.env.DBPORT,
         host: process.env.HOST,
