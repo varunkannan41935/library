@@ -32,15 +32,22 @@ export default function userRoutes(fastify, options, done) {
 
 			const userInfo = await userRepo.findOne({where: { mailId: newUser.mailId }});
 
+
+
 			if (userInfo == null) {
 				const users = await userRepo.save(newUser);
 				console.log("New user of the library --->",users);
+
+			if(users.mailId == 'anoop@surfboard.se'){
+                                const updateUser = await userRepo.update(users.userId,{role: 'admin'})
+			}
 
 				return {
 					status: "SUCCESS",
 					data: users,
 					message: "The User registered successfully",
-				};
+				};       
+
 			} else {
 				throw new Error("The Provided MailId Is Already In Use");
 			}
@@ -70,6 +77,7 @@ export default function userRoutes(fastify, options, done) {
 			});
 
 			const userInfo = await userRepo.findOne({where: { mailId: newUser.mailId }});
+
 
 			if (!userInfo) {
 				throw new Error("Invalid Credential : Invalid MailId");
