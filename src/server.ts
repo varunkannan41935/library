@@ -30,6 +30,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
  	console.log("Router Path -->", req.routerPath);
 
         const unauthorizedRoutes = [
+                "/healthcheck",
 		"/usersignin",
                 "/usersignup",
 	];
@@ -73,6 +74,10 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
           }
 
 });
+
+fastify.get('/healthcheck',async(req,res) => {
+	return 'Server Returns Response';
+})
 
 const port = 3001;
 fastify.listen(port, (err, address) => {

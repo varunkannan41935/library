@@ -1,4 +1,3 @@
-
 module.exports = {
 	production: true,
         type: "postgres",

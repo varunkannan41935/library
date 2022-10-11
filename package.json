@@ -27,7 +27,7 @@
   },
   "scripts": {
     "build": "tsc -project tsconfig.json",
-    "start": "npm run build && node ./src/server.ts",
+    "start": "npm run build && node ./src/server.js",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "name": "fastify",
