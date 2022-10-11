@@ -19,6 +19,7 @@ let Library = class Library {
     genre;
     availability;
     donatedBy;
+    imageUrl;
     createdAt;
 };
 __decorate([
@@ -50,8 +51,12 @@ __decorate([
     __metadata("design:type", String)
 ], Library.prototype, "donatedBy", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
-    __metadata("design:type", Date)
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Library.prototype, "imageUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], Library.prototype, "createdAt", void 0);
 Library = __decorate([
     (0, typeorm_1.Entity)()

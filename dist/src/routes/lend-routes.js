@@ -17,7 +17,7 @@ function lendRoutes(fastify, options, done) {
             console.log("Input To lend a book ->", book);
             Object.entries(book).forEach((entry) => {
                 const [bookKey, bookValue] = entry;
-                if (typeof bookValue !== "string" || bookValue == undefined || entry[1] == 0) {
+                if (typeof entry[1] !== "string" || entry[1] == undefined || entry[1].trim().length == 0) {
                     throw new Error("Invalid Input : Provide Required Input");
                 }
             });
@@ -66,42 +66,6 @@ function lendRoutes(fastify, options, done) {
             };
         }
     });
-    /**fastify.put("/updateduedate", async (req, res) => {
-        try {
-            const bookName = req.body.data.bookName;
-            const returnDate = req.body.data.returnDate;
-                        const user = req.body.user;
-
-            if (typeof bookName != "string" || !bookName) {
-                throw new Error("Invalid Input: Provide Required Input");
-            }
-
-            const findBook = await libRepo.findOne({where: { bookName },});
-            console.log("To Find The Book Is In The Library --->",findBook);
-
-            const books = await lendRepo.findOne({where: {userId: user.userId, bookName, returned: false,}});
-            console.log("To Update book --->", books);
-
-            if (books != null && findBook != null) {
-                const updateReturnDate = await lendRepo.update(books.lendId,{ returnDate });
-                console.log("Updated Return Date of the Book ->",updateReturnDate);
-
-                return {
-                    status: "SUCCESS",
-                    data: updateReturnDate,
-                    message: "The Book Updated successfully",
-                };
-            } else {
-                throw new Error("Invalid Input");
-            }
-        } catch (e) {
-            return {
-                status: "ERROR",
-                data: null,
-                message: e.message,
-            };
-        }
-    });**/
     fastify.get("/lendedbooksbyuser", async (req, res) => {
         try {
             const userId = req.body.user.userId;
@@ -133,40 +97,6 @@ function lendRoutes(fastify, options, done) {
             };
         }
     });
-    /**fastify.post("/issuebook", async (req, res) => {
-        try {
-            const book = {
-                userId: "",
-                mailId: req.body,
-                bookName: req.body.bookName,
-                                returnDate: req.body.returnDate,
-            };
-
-            const findBook = await libRepo.findOne({where: { bookName: book.bookName },});
-            console.log("To Find The Book Is In The Library --->",findBook);
-
-            if (findBook != null && findBook.availability != 0) {
-                const issueBook = await lendRepo.save(book);
-
-                const updatedBook = await libRepo.update(findBook.bookId,{availability:findBook.availability -1,});
-                console.log("Decrement in Availability ->",updatedBook);
-
-                return {
-                    status: "SUCCESS",
-                    data: issueBook,
-                    message: "The Book issued successfully",
-                };
-            } else {
-                throw new Error(`${book.bookName} Is Not Available`);
-            }
-        } catch (e) {
-            return {
-                status: "ERROR",
-                data: null,
-                message: e.message,
-            };
-        }
-    });**/
     done();
 }
 exports.default = lendRoutes;

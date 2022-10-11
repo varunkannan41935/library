@@ -5,7 +5,6 @@ import * as dotenv from 'dotenv';
 const bcrypt = require('bcrypt');
 const db = require("../db");
 const jwt = require("jsonwebtoken");
-dotenv.config();
 
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
@@ -19,8 +18,7 @@ export default function userRoutes(fastify, options, done) {
 				createdAt: Date(),
 			};
 			newUser.password = await bcrypt.hash(newUser.password,8);
-			console.log("Hashed Password ->", newUser.password);
-                        console.log('mailId', typeof newUser.mailId)
+                        console.log('NEW USER', newUser)
 
 			Object.entries(newUser).forEach((entry) => {
 				const [newUserKey, newUserValue]  = entry;
@@ -65,7 +63,6 @@ export default function userRoutes(fastify, options, done) {
 
 			Object.entries(newUser).forEach((entry) => {
 				const [newUserKey, newUserValue] = entry;
-				console.log("post user->", entry);
 
 				if (typeof newUserValue !== "string" || newUserValue == undefined) {
 					throw new Error("Invalid Input : Provide Required Input");
@@ -80,8 +77,6 @@ export default function userRoutes(fastify, options, done) {
 				const passwordCompare = await bcrypt.compare(newUser.password,userInfo.password);
 
 				console.log("To Check User info",passwordCompare);
-				console.log("Input Password -->",newUser.password);
-				console.log("Hashed Password In The DB -->",userInfo.password);
 
 				if (passwordCompare === true) {
 					const token = jwt.sign({ userInfo },process.env.JWT,{ expiresIn: "86400s" });

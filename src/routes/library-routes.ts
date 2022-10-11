@@ -14,8 +14,9 @@ export default function libraryRoutes(fastify, options, done) {
 				authorName: req.body.data.authorName,
 				language: req.body.data.language,
 				genre: req.body.data.genre,
-     				donatedBy: req.body.data.donatedBy,
-                                createdAt: Date(),
+				donatedBy: req.body.data.donatedBy,
+                                imageUrl: req.body.data.imageUrl,
+			    	createdAt: Date(),
 			};
 			console.log("Input Data To Post A Book ->", newBook);
                          
@@ -87,6 +88,7 @@ export default function libraryRoutes(fastify, options, done) {
 				language: req.body.data.language,
 				genre: req.body.data.genre,
 				donatedBy: req.body.data.donatedBy,
+                                imageUrl: req.body.data.imageUrl
 			};
 			console.log(`Input's For Updation --->`, newBook.donatedBy);
 
@@ -172,8 +174,10 @@ export default function libraryRoutes(fastify, options, done) {
 			const queryParams = {
 				bookName: req.query.bookName,
 				authorName: req.query.authorName,
+				language: req.query.language,
 				genre: req.query.genre,
 				availability: req.query.availability,
+				donatedBy: req.query.donatedBy,
 			};
 
 			console.log("queryParams to get book from library -> ",queryParams);

@@ -24,6 +24,9 @@ export class Library {
   donatedBy: string;
 
   @Column()
+  imageUrl: string;
+
+  @Column()
   createdAt: string;
 
 }

@@ -3,5 +3,5 @@ export declare class Users {
     mailId: string;
     password: string;
     role: string;
-    createdAt: Date;
+    createdAt: string;
 }

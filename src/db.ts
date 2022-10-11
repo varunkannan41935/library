@@ -4,6 +4,7 @@ import { Library } from "./entity/books";
 import { Lend } from "./entity/lends";
 import { Users } from "./entity/users";
 
+
 import { createConnection, getConnectionOptions } from "typeorm";
 
 export default fp(async (server) => {
@@ -11,8 +12,9 @@ export default fp(async (server) => {
 		const connectionOptions = await getConnectionOptions();
 		Object.assign(connectionOptions, {
 			synchronize: true,
-			entities: [Library, Lend, Users,],
+			entities: [Library, Lend, Users],
 		});
+		
 		const connection = await createConnection(connectionOptions);
 		console.log("connected to db");
 

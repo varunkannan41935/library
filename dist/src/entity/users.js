@@ -35,8 +35,8 @@ __decorate([
     __metadata("design:type", String)
 ], Users.prototype, "role", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
-    __metadata("design:type", Date)
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], Users.prototype, "createdAt", void 0);
 Users = __decorate([
     (0, typeorm_1.Entity)()

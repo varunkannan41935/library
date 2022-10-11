@@ -21,7 +21,6 @@ fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
 const jwt = require("jsonwebtoken");
-dotenv.config();
 
 const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
@@ -33,6 +32,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
         const unauthorizedRoutes = [
 		"/usersignin",
                 "/usersignup",
+		"/globalbooks/postbook",
 	];
 
         if(unauthorizedRoutes.includes(req.routerPath)){
@@ -75,7 +75,8 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 });
 
-fastify.listen(3001, (err, address) => {
+const port = 3001;
+fastify.listen(port, (err, address) => {
 	if (err) {
 		fastify.log.error("ERROR", err);
 		process.exit(1);
