@@ -17,6 +17,10 @@ export default function userRoutes(fastify, options, done) {
 				role: "user",
 				createdAt: Date(),
 			};
+
+                        if(!newUser.mailId && !newUser.password){
+                        throw new Error('provide Required Input');}
+
 			newUser.password = await bcrypt.hash(newUser.password,8);
                         console.log('NEW USER', newUser)
 

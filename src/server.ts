@@ -75,12 +75,14 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 });
 
+
 fastify.get('/healthcheck',async(req,res) => {
-	return 'Server Returns Response';
+       console.log(req.hostname);
+
+	return `Server Started Listening At ${req.hostname}`;
 })
 
-const port = 3001;
-fastify.listen(port, (err, address) => {
+fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
 	if (err) {
 		fastify.log.error("ERROR", err);
 		process.exit(1);
