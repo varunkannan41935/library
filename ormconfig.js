@@ -1,13 +1,3 @@
-module.exports = {
-	production: false,
-        type: "postgres",
-	port: 5432,
-	host: "localhost",
-	username: "postgres",
-	password: "root",
-        database: "postgres",
-	logging: false
-}
 
 module.exports = {
 	production: true,
@@ -16,6 +6,6 @@ module.exports = {
         host: process.env.HOST,
         username: process.env.DBUSERNAME,
         password: process.env.DBPASS,
-        database: process.env.DBNAME,,
+        database: process.env.DBNAME,
         logging: false
 }

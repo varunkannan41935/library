@@ -32,7 +32,6 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
         const unauthorizedRoutes = [
 		"/usersignin",
                 "/usersignup",
-		"/globalbooks/postbook",
 	];
 
         if(unauthorizedRoutes.includes(req.routerPath)){
