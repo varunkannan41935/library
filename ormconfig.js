@@ -16,6 +16,6 @@ module.exports = {
         host: process.env.HOST,
         username: process.env.DBUSERNAME,
         password: process.env.DBPASS,
-        database: "postgres",
+        database: process.env.DBNAME,,
         logging: false
 }
