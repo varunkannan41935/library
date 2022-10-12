@@ -28,17 +28,52 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 	console.log("Token -->", token );
  	console.log("Router Path -->", req.routerPath);
+	console.log('CONFIG',req.context.config);
 
-        const unauthorizedRoutes = [
+	if(req.routerPath == undefined){
+        res.send({error: 'Invalid Route'})
+        done();
+        }
+
+	const validRouterPath = [
+                "/getusers",
+                "/deleteuser",
+                "/postbook",
+                "/getallbooks",
+                "/updatebook",
+                "/deletebook",
+                "/getbookbyquery",
+                "/lendbook",
+                "/getlendedbooks",
+                "/lendedbooksbyuser",
+                "/returnbook",
+                "/getreturnedbooks",
+                "/getbooksreturnedbyuser",
+
+        ];
+        
+ 	if(validRouterPath.includes(req.routerPath) && token.length == 0){
+
+                res.send({
+                        statuscode: 500,
+                        error: 'Missing JWT Token',
+                        message: 'Provide JWT Token To Access',
+                });
+          
+         
+	}
+
+	const unauthorizedRoutes = [
                 "/healthcheck",
-		"/usersignin",
+                "/usersignin",
                 "/usersignup",
-	];
+        ];
 
         if(unauthorizedRoutes.includes(req.routerPath)){
                done();
         }
-          else{
+
+      	  else {
 
 
 		const adminRoutes = [
@@ -52,9 +87,19 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 		];
                 
 
-		const decoded = jwt.verify(token,process.env.JWT);
-		console.log("Decoded Token -->", decoded);
+		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
+                                if (err)
+                                return false;
 
+                                return decoded;
+                                });
+		console.log("Decoded Token -->", decoded);
+   
+		if(decoded == false)
+			res.send({
+			    statuscode: 500,
+                            error: 'JWT Token misformed',
+			})
 
                 var decodedUser = decoded.userInfo;
                 const role = decoded.userInfo.role;
@@ -71,7 +116,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
                      done(new Error ('Unauthorized User'));
                }
                done();
-          }
+         }
 
 });
 
@@ -89,3 +134,4 @@ fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
 	}
 	console.log(`Server started listening at ${address}`);
 });
+
