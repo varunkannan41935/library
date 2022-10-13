@@ -24,7 +24,6 @@ fastify.register(returnRoutes);
 const jwt = require("jsonwebtoken");
 
 
-
 const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 	const token = req.headers.authorization;
@@ -34,6 +33,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 	console.log('CONFIG: ',req.context.config);
         console.log('req body before token data: ',req.body)
         console.log('request object: ',req);
+        console.log('jwt secret key: ',process.env.JWT);
 
 	/*if(req.routerPath == undefined){
         res.send({error: 'Invalid Route'})
@@ -52,6 +52,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 	}
 
         if(unauthorizedRoutes.includes(req.routerPath)){
+		console.log('unauthorized routed: ',req.routerPath);
                done();
         }
 
@@ -67,8 +68,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
    
 		if(decoded == false)
 			res.send({
-			    statuscode: 500,
-                            error: 'JWT Token misformed',
+                            error: 'JWT Token misformed/expired',
 			})
 
                 var decodedUser = decoded.userInfo;

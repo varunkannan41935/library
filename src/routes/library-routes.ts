@@ -95,7 +95,7 @@ export default function libraryRoutes(fastify, options, done) {
 			const findBook = await libRepo.findOne({where: { bookName: ILike( bookName) },});
 			console.log("To find the book For Updation is in the library ->",findBook);
 
-			if (findBook.length == 0) {
+			if (findBook == null) {
 				throw new Error(`The Book ${bookName} Is Not Found In The Library`);
 			}
 
