@@ -13,6 +13,7 @@ import libraryRoutes from "./routes/library-routes";
 import lendRoutes from "./routes/lend-routes";
 import userRoutes from "./routes/user-routes";
 import returnRoutes from "./routes/return-routes";
+import { validRouterPath, unauthorizedRoutes, adminRoutes } from "./rts"
 
 fastify.register(db);
 fastify.register(libraryRoutes);
@@ -22,35 +23,20 @@ fastify.register(returnRoutes);
 
 const jwt = require("jsonwebtoken");
 
+
+
 const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 	const token = req.headers.authorization;
 
 	console.log("Token -->", token );
- 	console.log("Router Path -->", req.routerPath);
+ 	console.log("RouterPath -->", req.routerPath);
 	console.log('CONFIG',req.context.config);
 
-	if(req.routerPath == undefined){
+	/*if(req.routerPath == undefined){
         res.send({error: 'Invalid Route'})
         done();
-        }
-
-	const validRouterPath = [
-                "/getusers",
-                "/deleteuser",
-                "/postbook",
-                "/getallbooks",
-                "/updatebook",
-                "/deletebook",
-                "/getbookbyquery",
-                "/lendbook",
-                "/getlendedbooks",
-                "/lendedbooksbyuser",
-                "/returnbook",
-                "/getreturnedbooks",
-                "/getbooksreturnedbyuser",
-
-        ];
+        }*/
         
  	if(validRouterPath.includes(req.routerPath) && token.length == 0){
 
@@ -63,29 +49,11 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
          
 	}
 
-	const unauthorizedRoutes = [
-                "/healthcheck",
-                "/usersignin",
-                "/usersignup",
-        ];
-
         if(unauthorizedRoutes.includes(req.routerPath)){
                done();
         }
 
       	  else {
-
-
-		const adminRoutes = [
-			"/postbook",
-			"/updatebook",
-			"/deletebook",
-                        "/getusers",
-                        "/deleteuser",
-                        "/getlendedbooks",
-                        "/getreturnedbooks",
-		];
-                
 
 		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
                                 if (err)
