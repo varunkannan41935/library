@@ -7,6 +7,7 @@ import { Library } from "./entity/books";
 import { Lend } from "./entity/lends";
 import { Users } from "./entity/users";
 import * as dotenv from "dotenv";
+import * as jwt from "jsonwebtoken"
 
 import db from "./db";
 import libraryRoutes from "./routes/library-routes";
@@ -21,10 +22,7 @@ fastify.register(lendRoutes);
 fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
-const jwt = require("jsonwebtoken");
-
-
-const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
+fastify.addHook("preHandler", (req, res, done) => {
 
 	const token = req.headers.authorization;
 
@@ -32,8 +30,8 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
  	console.log("req Params: ", req.params);
 	console.log("routerPath: ",req.url);
 	console.log('CONFIG: ',req.context.config);
-        console.log('req body before token data: ',req.body)
-       // console.log('request object: ',req);
+        console.log('req body: ',req.body)
+        console.log('request object: ',req);
 
  	if(validRouterPath.includes(req.url) && !token ){
 
@@ -84,7 +82,6 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
                }
                done();
          }
-
 });
 
 

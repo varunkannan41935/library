@@ -4,14 +4,14 @@ import { RequestGenericInterface } from "fastify";
 import * as dotenv from 'dotenv';
 const bcrypt = require('bcrypt');
 const db = require("../db");
-const jwt = require("jsonwebtoken");
+import * as jwt from "jsonwebtoken";
 
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
         console.log('verifying whether the control flows through User Routes');
 
-	fastify.put("/usersignin", async (req, res) => {
+	fastify.post("/usersignin", async (req, res) => {
 	
                 /**const token = req.headers.authorization; 
   
