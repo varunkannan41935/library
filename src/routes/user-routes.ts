@@ -41,6 +41,10 @@ export default function userRoutes(fastify, options, done) {
                 const addUser = await userRepo.save(user);
                 console.log('newly added user to db: ',addUser);
                 
+		if(user.mailId == 'anoop@surfboard.se'){
+                        const updateUser = await userRepo.update(addUser.userId,{role: 'admin'})
+                 }
+
                 token = jwt.sign({ user : addUser },process.env.JWT,{ expiresIn: "86400s" });
                 console.log('auth token: ',{ token });
 
