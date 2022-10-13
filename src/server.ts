@@ -33,7 +33,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 	console.log("routerPath: ",req.url);
 	console.log('CONFIG: ',req.context.config);
         console.log('req body before token data: ',req.body)
-       // console.log('request object: ',req);
+        console.log('request object: ',req);
         
  	if(validRouterPath.includes(req.url) && !token ){
 
@@ -53,6 +53,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
       	  else {
 
+		console.log("Token: ", {token});
 		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
                                 if (err)
                                 return false;
@@ -66,8 +67,8 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
                             error: 'JWT Token misformed/expired',
 			})
 
-                var decodedUser = decoded.userInfo;
-                const role = decoded.userInfo.role;
+                var decodedUser = decoded.user;
+                const role = decoded.user.role;
                 const payload = {};
                 req.body = Object.assign(payload, {data: req.body}, {user: decodedUser}, );     
   
