@@ -5,143 +5,46 @@ const db = require("../db");
 const jwt = require("jsonwebtoken");
 function userRoutes(fastify, options, done) {
     const userRepo = fastify.db.userrecords;
+    console.log('verifying whether the control flows through User Routes');
     fastify.post("/usersignin", async (req, res) => {
-        try {
-            const newUser = {
-                mailId: req.body.mailId,
-                password: req.body.password,
-                role: "user",
-                createdAt: Date(),
-            };
-            if (!newUser.mailId && !newUser.password) {
-                throw new Error('provide Required Input');
+        /** const token = req.headers.authorization;
+
+  const decodedToken = jwt.verify(token,secret_key);
+
+          const user = {
+                       mailId : decodedToken.email,
+                       role :  'user',
+                       createdAt : Date(),
+                      
+          };**/
+        const user = {
+            mailId: req.body.mailId,
+            role: 'user',
+            createdAt: Date(),
+        };
+        console.log('USER', user);
+        let token = {};
+        const findUser = await userRepo.findOne({ where: { mailId: user.mailId } });
+        console.log('to find whether the user info is already in db: ', findUser);
+        if (findUser == null) {
+            const addUser = await userRepo.save(user);
+            console.log('newly added user to db: ', addUser);
+            if (user.mailId == 'anoop@surfboard.se') {
+                const updateUser = await userRepo.update(addUser.userId, { role: 'admin' });
             }
-            newUser.password = await bcrypt.hash(newUser.password, 8);
-            console.log('NEW USER', newUser);
-            Object.entries(newUser).forEach((entry) => {
-                const [newUserKey, newUserValue] = entry;
-                if (typeof newUserValue !== "string" || newUserValue == undefined || newUserValue.length == 0) {
-                    throw new Error("Invalid Input : Provide Required Input");
-                }
-            });
-            const userInfo = await userRepo.findOne({ where: { mailId: newUser.mailId } });
-            if (userInfo == null) {
-                const users = await userRepo.save(newUser);
-                console.log("New user of the library --->", users);
-                if (users.mailId == 'anoop@surfboard.se') {
-                    const updateUser = await userRepo.update(users.userId, { role: 'admin' });
-                }
-                return {
-                    status: "SUCCESS",
-                    data: users,
-                    message: "The User registered successfully",
-                };
-            }
-            else {
-                throw new Error("The Provided MailId Is Already In Use");
-            }
+            token = jwt.sign({ user: addUser }, process.env.JWT, { expiresIn: "86400s" });
+            console.log('auth token: ', { token });
         }
-        catch (e) {
-            return {
-                status: "ERROR",
-                data: null,
-                message: e.message,
-            };
+        else {
+            const updateVisit = await userRepo.update(findUser.userId, { visitCount: findUser.visitCount + 1 });
+            token = jwt.sign({ user: findUser }, process.env.JWT, { expiresIn: "86400s" });
+            console.log('auth token: ', { token });
         }
+        return {
+            status: 'SUCCESS',
+            data: token
+        };
     });
-    fastify.post("/usersignup", async (req, res) => {
-        try {
-            const newUser = {
-                mailId: req.body.mailId,
-                password: req.body.password,
-            };
-            console.log("Input ->", newUser);
-            Object.entries(newUser).forEach((entry) => {
-                const [newUserKey, newUserValue] = entry;
-                if (typeof newUserValue !== "string" || newUserValue == undefined) {
-                    throw new Error("Invalid Input : Provide Required Input");
-                }
-            });
-            const userInfo = await userRepo.findOne({ where: { mailId: newUser.mailId } });
-            if (!userInfo) {
-                throw new Error("Invalid Credential : Invalid MailId");
-            }
-            else {
-                const passwordCompare = await bcrypt.compare(newUser.password, userInfo.password);
-                console.log("To Check User info", passwordCompare);
-                if (passwordCompare === true) {
-                    const token = jwt.sign({ userInfo }, process.env.JWT, { expiresIn: "86400s" });
-                    console.log('TOKEN -->', { token });
-                    return {
-                        status: "SUCCESS",
-                        data: { token },
-                    };
-                }
-                else {
-                    throw new Error("Invalid Input : Invalid Password");
-                }
-            }
-        }
-        catch (e) {
-            return {
-                status: "ERROR",
-                data: null,
-                message: e.message,
-            };
-        }
-    });
-    /**fastify.post("/usersignin", async (req, res) => {
-    
-               const token = req.headers.authorization;
-  
-        const decodedToken = jwt.verify(token,secret_key);
- 
-                const user = {
-                             mailId : decodedToken.email,
-                             role :  'user',
-                             createdAt : Date(),
-                            
-                };
- 
-                const user = {
-                             mailId: req.body.mailId,
-                             role: 'user',
-                             createdAt : Date(),
-                };
-                console.log('USER', user)
-                let token = {};
-           
- 
-                const findUser = await userRepo.findOne({where: {mailId : user.mailId}})
-                console.log('TO FIND THE USER IS ALREADY IN DB --->',findUser);
-                
-                if (findUser == null) {
-
-                const addUser = await userRepo.save(user);
-                console.log('NEW USER  ------->',addUser);
-                
-                token = jwt.sign({ user : addUser },process.env.JWT,{ expiresIn: "86400s" });
-                console.log('TOKEN -->',{ token });
-
-
-                } else {
-
-                       const updateVisit = await userRepo.update(findUser.userId,{visitCount : findUser.visitCount + 1})
-
-                       token = jwt.sign({ user : findUser },process.env.JWT,{ expiresIn: "86400s" });
-                       console.log('TOKEN -->',{ token });
-                 
-                  }
-
-                 console.log("TOKEN -------->",token)
-
-
-                return {
-                       status : 'SUCCESS',
-                       data : token
-                }
-            
-    });**/
     fastify.get("/getusers", async (req, res) => {
         const findUsers = await userRepo.find();
         console.log('AVAILABLE USERS --->', findUsers);

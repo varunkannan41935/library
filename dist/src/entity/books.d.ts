@@ -6,6 +6,5 @@ export declare class Library {
     genre: string;
     availability: string;
     donatedBy: string;
-    imageUrl: string;
     createdAt: string;
 }

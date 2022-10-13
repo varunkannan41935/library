@@ -11,9 +11,9 @@ export default function userRoutes(fastify, options, done) {
 
         console.log('verifying whether the control flows through User Routes');
 
-	fastify.post("/usersignin", async (req, res) => {
+	fastify.put("/usersignin", async (req, res) => {
 	
-              /** const token = req.headers.authorization; 
+                /**const token = req.headers.authorization; 
   
  		const decodedToken = jwt.verify(token,secret_key);
  

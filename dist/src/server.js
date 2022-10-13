@@ -21,24 +21,26 @@ fastify.register(return_routes_1.default);
 const jwt = require("jsonwebtoken");
 const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
     const token = req.headers.authorization;
-    console.log("Token -->", token);
-    console.log("RouterPath -->", req.routerPath);
-    console.log('CONFIG', req.context.config);
-    /*if(req.routerPath == undefined){
-        res.send({error: 'Invalid Route'})
-        done();
-        }*/
-    if (rts_1.validRouterPath.includes(req.routerPath) && token.length == 0) {
+    console.log("Token: ", token);
+    console.log("req Params: ", req.params);
+    console.log("routerPath: ", req.url);
+    console.log('CONFIG: ', req.context.config);
+    console.log('req body before token data: ', req.body);
+    console.log('request object: ', req);
+    if (rts_1.validRouterPath.includes(req.url) && !token) {
         res.send({
             statuscode: 500,
             error: 'Missing JWT Token',
-            message: 'Provide JWT Token To Access',
+            message: 'Provide valid JWT Token',
         });
     }
-    if (rts_1.unauthorizedRoutes.includes(req.routerPath)) {
+    if (rts_1.unauthorizedRoutes.includes(req.url)) {
+        console.log('unauthorized route: ', req.url);
         done();
     }
     else {
+        console.log("Token: ", { token });
+        console.log("");
         const decoded = jwt.verify(token, process.env.JWT, (err, decoded) => {
             if (err)
                 return false;
@@ -47,16 +49,15 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
         console.log("Decoded Token -->", decoded);
         if (decoded == false)
             res.send({
-                statuscode: 500,
-                error: 'JWT Token misformed',
+                error: 'JWT Token misformed/expired',
             });
-        var decodedUser = decoded.userInfo;
-        const role = decoded.userInfo.role;
+        var decodedUser = decoded.user;
+        const role = decoded.user.role;
         const payload = {};
         req.body = Object.assign(payload, { data: req.body }, { user: decodedUser });
-        console.log('REQ BODY -->', req.body);
-        console.log("User -->", decodedUser);
-        if (rts_1.adminRoutes.includes(req.routerPath) && role == 'user') {
+        console.log('req body after adding token data: ', req.body);
+        console.log("User: ", decodedUser);
+        if (rts_1.adminRoutes.includes(req.url) && role == 'user') {
             console.log('-- To Check the Route ->', role);
             done(new Error('Unauthorized User'));
         }
@@ -73,5 +74,7 @@ fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
         process.exit(1);
     }
     console.log(`Server started listening at ${address}`);
+    console.log('registered Routes: ', fastify.printRoutes());
+    console.log(address);
 });
 //# sourceMappingURL=server.js.map

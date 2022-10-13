@@ -1,1 +1,1 @@
-export default function lendRoutes(fastify: any, options: any, done: any): void;
+export default function returnRoutes(fastify: any, options: any, done: any): void;

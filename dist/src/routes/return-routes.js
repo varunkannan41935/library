@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require("../db");
-function lendRoutes(fastify, options, done) {
+function returnRoutes(fastify, options, done) {
     const lendRepo = fastify.db.lendrecords;
     const libRepo = fastify.db.library;
     const userRepo = fastify.db.userrecords;
+    console.log('verifying whether control flows through return Routes');
     fastify.post("/returnbook", async (req, res) => {
         try {
             const bookName = req.body.data.bookName;
@@ -97,5 +98,5 @@ function lendRoutes(fastify, options, done) {
     });
     done();
 }
-exports.default = lendRoutes;
+exports.default = returnRoutes;
 //# sourceMappingURL=return-routes.js.map

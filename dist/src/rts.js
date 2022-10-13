@@ -19,6 +19,7 @@ exports.validRouterPath = [
 exports.unauthorizedRoutes = [
     "/usersignin",
     "/usersignup",
+    "/healthcheck",
 ];
 exports.adminRoutes = [
     "/postbook",

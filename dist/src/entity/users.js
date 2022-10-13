@@ -14,9 +14,9 @@ const typeorm_1 = require("typeorm");
 let Users = class Users {
     userId;
     mailId;
-    password;
     role;
     createdAt;
+    visitCount;
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
@@ -29,15 +29,15 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Users.prototype, "password", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
 ], Users.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Users.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, default: 0 }),
+    __metadata("design:type", Number)
+], Users.prototype, "visitCount", void 0);
 Users = __decorate([
     (0, typeorm_1.Entity)()
 ], Users);

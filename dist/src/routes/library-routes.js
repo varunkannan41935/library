@@ -4,6 +4,7 @@ const typeorm_1 = require("typeorm");
 const db = require("../db");
 function libraryRoutes(fastify, options, done) {
     const libRepo = fastify.db.library;
+    console.log('verifying whether controlm flows through Library Routes');
     fastify.post("/postbook", async (req, res) => {
         try {
             const newBook = {
@@ -12,7 +13,6 @@ function libraryRoutes(fastify, options, done) {
                 language: req.body.data.language,
                 genre: req.body.data.genre,
                 donatedBy: req.body.data.donatedBy,
-                imageUrl: req.body.data.imageUrl,
                 createdAt: Date(),
             };
             console.log("Input Data To Post A Book ->", newBook);
@@ -75,12 +75,11 @@ function libraryRoutes(fastify, options, done) {
                 language: req.body.data.language,
                 genre: req.body.data.genre,
                 donatedBy: req.body.data.donatedBy,
-                imageUrl: req.body.data.imageUrl
             };
             console.log(`Input's For Updation --->`, newBook.donatedBy);
             const findBook = await libRepo.findOne({ where: { bookName: (0, typeorm_1.ILike)(bookName) }, });
             console.log("To find the book For Updation is in the library ->", findBook);
-            if (findBook.length == 0) {
+            if (findBook == null) {
                 throw new Error(`The Book ${bookName} Is Not Found In The Library`);
             }
             if (JSON.stringify(newBook) === "{}") {
