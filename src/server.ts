@@ -29,30 +29,25 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 	const token = req.headers.authorization;
 
 	console.log("Token: ", token );
- 	console.log("RouterPath: ", req.routerPath);
+ 	console.log("req Params: ", req.params);
+	console.log("routerPath: ",req.url);
 	console.log('CONFIG: ',req.context.config);
         console.log('req body before token data: ',req.body)
-        console.log('request object: ',req);
-        console.log('jwt secret key: ',process.env.JWT);
-
-	/*if(req.routerPath == undefined){
-        res.send({error: 'Invalid Route'})
-        done();
-        }*/
+       // console.log('request object: ',req);
         
- 	if(validRouterPath.includes(req.routerPath) && token.length == 0){
+ 	if(validRouterPath.includes(req.url) && !token ){
 
                 res.send({
                         statuscode: 500,
                         error: 'Missing JWT Token',
-                        message: 'Provide JWT Token To Access',
+                        message: 'Provide valid JWT Token',
                 });
           
          
 	}
 
-        if(unauthorizedRoutes.includes(req.routerPath)){
-		console.log('unauthorized routed: ',req.routerPath);
+        if(unauthorizedRoutes.includes(req.url)){
+		console.log('unauthorized route: ',req.url);
                done();
         }
 
@@ -80,7 +75,7 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
                 console.log('req body after adding token data: ',req.body)
                 console.log("User: ",decodedUser);
                  
-               if(adminRoutes.includes(req.routerPath) && role == 'user'){
+               if(adminRoutes.includes(req.url) && role == 'user'){
 
                  console.log('-- To Check the Route ->',role)
                      done(new Error ('Unauthorized User'));
