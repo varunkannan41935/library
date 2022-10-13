@@ -5,10 +5,12 @@ import { Library } from "../entity/books";
 import { RequestGenericInterface } from "fastify";
 const db = require("../db");
 
-export default function lendRoutes(fastify, options, done) {
+export default function returnRoutes(fastify, options, done) {
 	const lendRepo = fastify.db.lendrecords;
 	const libRepo = fastify.db.library;
 	const userRepo = fastify.db.userrecords;
+
+        console.log('verifying whether control flows through return Routes');
 
 	fastify.post("/returnbook", async (req, res) => {
 		try {

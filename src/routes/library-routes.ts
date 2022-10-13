@@ -6,6 +6,8 @@ import { In } from "typeorm";
 
 export default function libraryRoutes(fastify, options, done) {
 	const libRepo = fastify.db.library;
+    
+	console.log('verifying whether controlm flows through Library Routes');
 
 	fastify.post("/postbook", async (req, res) => {
 		try {
@@ -15,7 +17,6 @@ export default function libraryRoutes(fastify, options, done) {
 				language: req.body.data.language,
 				genre: req.body.data.genre,
 				donatedBy: req.body.data.donatedBy,
-                                imageUrl: req.body.data.imageUrl,
 			    	createdAt: Date(),
 			};
 			console.log("Input Data To Post A Book ->", newBook);
@@ -88,7 +89,6 @@ export default function libraryRoutes(fastify, options, done) {
 				language: req.body.data.language,
 				genre: req.body.data.genre,
 				donatedBy: req.body.data.donatedBy,
-                                imageUrl: req.body.data.imageUrl
 			};
 			console.log(`Input's For Updation --->`, newBook.donatedBy);
 

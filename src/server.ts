@@ -29,9 +29,11 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
 
 	const token = req.headers.authorization;
 
-	console.log("Token -->", token );
- 	console.log("RouterPath -->", req.routerPath);
-	console.log('CONFIG',req.context.config);
+	console.log("Token: ", token );
+ 	console.log("RouterPath: ", req.routerPath);
+	console.log('CONFIG: ',req.context.config);
+        console.log('req body before token data: ',req.body)
+        console.log('request object: ',req);
 
 	/*if(req.routerPath == undefined){
         res.send({error: 'Invalid Route'})
@@ -75,8 +77,8 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
                 req.body = Object.assign(payload, {data: req.body}, {user: decodedUser}, );     
   
 
-                console.log('REQ BODY -->',req.body)
-                console.log("User -->",decodedUser);
+                console.log('req body after adding token data: ',req.body)
+                console.log("User: ",decodedUser);
                  
                if(adminRoutes.includes(req.routerPath) && role == 'user'){
 
@@ -100,6 +102,7 @@ fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
 		fastify.log.error("ERROR", err);
 		process.exit(1);
 	}
-	console.log(`Server started listening at ${address}`);
+	console.log(`Server started listening at ${address}`)
+	console.log('registered Routes: ',fastify.printRoutes());
 });
 

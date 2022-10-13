@@ -23,8 +23,6 @@ export class Library {
   @Column()
   donatedBy: string;
 
-  @Column()
-  imageUrl: string;
 
   @Column()
   createdAt: string;

@@ -9,6 +9,8 @@ const jwt = require("jsonwebtoken");
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
+        console.log('verifying whether the control flows through User Routes');
+
 	fastify.post("/usersignin", async (req, res) => {
 		try {
 			const newUser = {

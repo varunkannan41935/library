@@ -18,7 +18,7 @@ export const validRouterPath = [
 export const unauthorizedRoutes = [
                 "/usersignin",
                 "/usersignup",
-		"/healthcheck"
+		"/healthcheck",
         ];
 
 export const adminRoutes = [
