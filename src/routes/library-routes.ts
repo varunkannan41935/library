@@ -54,7 +54,7 @@ export default function libraryRoutes(fastify, options, done) {
 		}
 	});
 
-	fastify.get("/postnewbook", async (req, res) => {
+	fastify.put("/postnewbook", async (req, res) => {
                 try {
                         const newBook = {
                                 bookName: req.body.bookName,
