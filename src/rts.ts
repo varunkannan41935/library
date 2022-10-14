@@ -19,6 +19,7 @@ export const unauthorizedRoutes = [
                 "/usersignin",
                 "/usersignup",
 		"/healthcheck",
+		"/checkroute",
         ];
 
 export const adminRoutes = [
