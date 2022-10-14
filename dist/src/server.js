@@ -38,14 +38,20 @@ fastify.register(library_routes_1.default);
 fastify.register(lend_routes_1.default);
 fastify.register(user_routes_1.default);
 fastify.register(return_routes_1.default);
+fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
+    console.log('content type parser data --------: ', req, body);
+    var json = JSON.parse(body);
+    console.log('parsed json data: ', json);
+    done(null, json);
+});
 fastify.addHook("preHandler", (req, res, done) => {
     const token = req.headers.authorization;
     console.log("Token: ", token);
-    console.log("req Params: ", req.params);
-    console.log("routerPath: ", req.url);
-    console.log('CONFIG: ', req.context.config);
+    console.log("URL: ", req.url);
     console.log('req body: ', req.body);
     console.log('request object: ', req);
+    console.log('headers', req.headers);
+    console.log('req parse', JSON.parse(req));
     if (rts_1.validRouterPath.includes(req.url) && !token) {
         res.send({
             statuscode: 500,
@@ -54,12 +60,13 @@ fastify.addHook("preHandler", (req, res, done) => {
         });
     }
     if (rts_1.unauthorizedRoutes.includes(req.url)) {
-        console.log('unauthorized route: ', req.url);
+        console.log('unauthorized route -----------------------------------------------------: ', req.url);
+        console.log(`unauthorized route's data-----------------------------------------------:`, req.body, req.headers);
         done();
     }
     else {
         console.log("Token: ", { token });
-        console.log("");
+        console.log("------------------------------------");
         const decoded = jwt.verify(token, process.env.JWT, (err, decoded) => {
             if (err)
                 return false;
@@ -84,21 +91,8 @@ fastify.addHook("preHandler", (req, res, done) => {
     }
 });
 fastify.get('/healthcheck', async (req, res) => {
-    const data = {
-        bookName: req.body.bookName,
-        authorName: req.body.authorName,
-        language: req.body.language,
-        genre: req.body.genre,
-        donatedBy: req.body.donatedBy,
-        createdAt: Date(),
-    };
-    const saveBook = await fastify.db.library.save(data);
-    console.log('To Check -->', saveBook);
-    return {
-        status: "SUCCESS",
-        data: saveBook,
-        message: `Server Started Listening At ${req.hostname}`,
-    };
+    console.log(req.hostname);
+    return `Server Started Listening At ${req.hostname}`;
 });
 fastify.post('/checkroute', async (req, res) => {
     const data = {

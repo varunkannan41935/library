@@ -24,18 +24,13 @@ fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
 fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-   console.log('content type parser data: ',req,body); 
+   console.log('content type parser data --------: ',req,body); 
        
-  try {
-    var json = JSON.parse(req)
+    var json = JSON.parse(body)
   
   console.log('parsed json data: ',json)
   
     done(null, json)
-  } catch (err) {
-    err.statusCode = 400
-    done(err, undefined)
-  }
 })
 
 
@@ -59,16 +54,16 @@ fastify.addHook("preHandler", (req, res, done) => {
 	}
 
         if(unauthorizedRoutes.includes(req.url)){
-		console.log('unauthorized route: ',req.url);
+		console.log('unauthorized route -----------------------------------------------------: ',req.url);
   
-                console.log(`unauthorized route's data:`,req.body, req.headers, )   
+                console.log(`unauthorized route's data-----------------------------------------------:`,req.body, req.headers, )   
 		done();
         }
 
       	  else {
 
 		console.log("Token: ", {token});
-                console.log("")
+                console.log("------------------------------------")
 		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
                                 if (err)
                                 return false;

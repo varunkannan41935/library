@@ -4,8 +4,8 @@ exports.adminRoutes = exports.unauthorizedRoutes = exports.validRouterPath = voi
 exports.validRouterPath = [
     "/getusers",
     "/deleteuser",
-    "/postbook",
-    "/getallbooks",
+    //"/postbook",
+    //"/getallbooks",
     "/updatebook",
     "/deletebook",
     "/getbookbyquery",
@@ -21,9 +21,12 @@ exports.unauthorizedRoutes = [
     "/usersignup",
     "/healthcheck",
     "/checkroute",
+    "/postbook",
+    "/getallbooks",
+    "/postnewbook"
 ];
 exports.adminRoutes = [
-    "/postbook",
+    //"/postbook",
     "/updatebook",
     "/deletebook",
     "/getusers",
