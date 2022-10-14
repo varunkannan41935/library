@@ -6,7 +6,7 @@ import { In } from "typeorm";
 
 export default function libraryRoutes(fastify, options, done) {
 	const libRepo = fastify.db.library;
-    
+
 	fastify.post("/postbook", async (req, res) => {
 		try {
 			const newBook = {

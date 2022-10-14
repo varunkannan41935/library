@@ -35,17 +35,16 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 
 
 fastify.addHook("preHandler", (req, res, done) => {
-
+	
 	const token = req.headers.authorization;
 
 	console.log("Token: ", token );
 	console.log("URL: ",req.url);
         console.log('req body: ',req.body)
-        console.log('request object: ',req);
+        //console.log('request object: ',req);
         console.log('headers',req.headers);
-        console.log('req parse',JSON.parse(req));
-
- 	if(validRouterPath.includes(req.url) && !token ){
+ 	
+	if(validRouterPath.includes(req.url) && !token ){
                 res.send({
                         statuscode: 500,
                         error: 'Missing JWT Token',
@@ -54,16 +53,18 @@ fastify.addHook("preHandler", (req, res, done) => {
 	}
 
         if(unauthorizedRoutes.includes(req.url)){
-		console.log('unauthorized route -----------------------------------------------------: ',req.url);
+
+
+		console.log('unauthorized route : ',req.url);
   
-                console.log(`unauthorized route's data-----------------------------------------------:`,req.body, req.headers, )   
+                console.log(`unauthorized route's data:`,req.body, req.headers, )   
 		done();
         }
 
       	  else {
-
+		
 		console.log("Token: ", {token});
-                console.log("------------------------------------")
+            
 		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
                                 if (err)
                                 return false;
