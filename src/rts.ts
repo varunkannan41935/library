@@ -1,8 +1,8 @@
 export const validRouterPath = [
                 "/getusers",
                 "/deleteuser",
-                "/postbook",
-                "/getallbooks",
+                //"/postbook",
+                //"/getallbooks",
                 "/updatebook",
                 "/deletebook",
                 "/getbookbyquery",
@@ -20,10 +20,13 @@ export const unauthorizedRoutes = [
                 "/usersignup",
 		"/healthcheck",
 		"/checkroute",
+		"/postbook",
+		"/getallbooks",
+		"/postnewbook"
         ];
 
 export const adminRoutes = [
-                        "/postbook",
+                        //"/postbook",
                         "/updatebook",
                         "/deletebook",
                         "/getusers",

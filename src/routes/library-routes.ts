@@ -10,11 +10,11 @@ export default function libraryRoutes(fastify, options, done) {
 	fastify.post("/postbook", async (req, res) => {
 		try {
 			const newBook = {
-				bookName: req.body.data.bookName,
-				authorName: req.body.data.authorName,
-				language: req.body.data.language,
-				genre: req.body.data.genre,
-				donatedBy: req.body.data.donatedBy,
+				bookName: req.body.bookName,
+				authorName: req.body.authorName,
+				language: req.body.language,
+				genre: req.body.genre,
+				donatedBy: req.body.donatedBy,
 			    	createdAt: Date(),
 			};
 			console.log("Input Data To Post A Book ->", newBook);
@@ -53,6 +53,53 @@ export default function libraryRoutes(fastify, options, done) {
 			};
 		}
 	});
+
+	fastify.get("/postnewbook", async (req, res) => {
+                try {
+                        const newBook = {
+                                bookName: req.body.bookName,
+                                authorName: req.body.authorName,
+                                language: req.body.language,
+                                genre: req.body.genre,
+                                donatedBy: req.body.donatedBy,
+                                createdAt: Date(),
+                        };
+                        console.log("Input Data To Post A Book ->", newBook);
+
+
+                        Object.entries(newBook).forEach((book) => {
+                                const [bookKey,bookValue] = book;
+
+                                if (book[1] == undefined || book[1] == null || book[1].trim().length  == 0) {
+                                        throw new Error(`Invalid Input : Provide Required input for ${bookKey}`);
+                                }
+
+                        });
+
+                        const getBook = await libRepo.findOne({where: { bookName: ILike(newBook.bookName)}});
+                        console.log("To Check Whether The Book Is Already In The library -->",getBook);
+
+                        if (getBook == null) {
+
+                                const postBook = await libRepo.save(newBook);
+                                console.log("New Book posted in the library -> ",postBook);
+
+                                return {
+                                        status: "SUCCESS",
+                                        data: postBook,
+                                        message: `${newBook.bookName} book added successfully`,
+                                };
+                        } else {
+                                throw new Error(`Invalid Input : ${newBook.bookName.trim()} Is Already In The Library`);
+                        }
+                } catch (e) {
+                        return {
+                                status: "ERROR",
+                                data: null,
+                                message: e.message,
+                        };
+                }
+        });
 
 	fastify.get("/getallbooks", async (req, res) => {
 		const getBooks = await libRepo.find();
