@@ -24,14 +24,20 @@ fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
 fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-
-console.log('content type parser data: ',req,  body );    
-
-	var json = JSON.parse(body)
- 
-    console.log('parser parsed data: ',json)
+   console.log('content type parser data: ',req,body); 
+       
+  try {
+    var json = JSON.parse(body)
+  
+  console.log('parsed json data: ',json)
+  
     done(null, json)
+  } catch (err) {
+    err.statusCode = 400
+    done(err, undefined)
+  }
 })
+
 
 fastify.addHook("preHandler", (req, res, done) => {
 
