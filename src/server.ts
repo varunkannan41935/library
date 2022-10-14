@@ -23,17 +23,15 @@ fastify.register(lendRoutes);
 fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
-/*fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-  try {
-    var json = JSON.parse(body)
+fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
+
+console.log('content type parser data: ',req,  body );    
+
+	var json = JSON.parse(body)
  
-    console.log('parser data: ',json)
+    console.log('parser parsed data: ',json)
     done(null, json)
-  } catch (err) {
-    err.statusCode = 400
-    done(err, undefined)
-  }
-})*/
+})
 
 fastify.addHook("preHandler", (req, res, done) => {
 
@@ -90,14 +88,6 @@ fastify.addHook("preHandler", (req, res, done) => {
                done();
          }
 });
-
-fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-    console.log(req,body);
-    var json = JSON.parse(body)
-
-    console.log('parser data: ',json)
-    done(null, json)
-})
 
 fastify.get('/healthcheck',async(req,res) => {
        console.log(req.hostname);
