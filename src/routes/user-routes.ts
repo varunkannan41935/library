@@ -9,8 +9,6 @@ import * as jwt from "jsonwebtoken";
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
-        console.log('verifying whether the control flows through User Routes');
-
 	fastify.post("/usersignin", async (req, res) => {
 	
                 /**const token = req.headers.authorization; 
@@ -40,10 +38,6 @@ export default function userRoutes(fastify, options, done) {
 
                 const addUser = await userRepo.save(user);
                 console.log('newly added user to db: ',addUser);
-                
-		if(user.mailId == 'anoop@surfboard.se'){
-                        const updateUser = await userRepo.update(addUser.userId,{role: 'admin'})
-                 }
 
                 token = jwt.sign({ user : addUser },process.env.JWT,{ expiresIn: "86400s" });
                 console.log('auth token: ',{ token });

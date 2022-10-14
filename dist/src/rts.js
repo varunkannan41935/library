@@ -20,6 +20,7 @@ exports.unauthorizedRoutes = [
     "/usersignin",
     "/usersignup",
     "/healthcheck",
+    "/checkroute",
 ];
 exports.adminRoutes = [
     "/postbook",

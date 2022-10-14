@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,6 +26,7 @@ const fastify = require("fastify")({
     logger: true,
     requestIdLogLabel: "reqId",
 });
+const jwt = __importStar(require("jsonwebtoken"));
 const db_1 = __importDefault(require("./db"));
 const library_routes_1 = __importDefault(require("./routes/library-routes"));
 const lend_routes_1 = __importDefault(require("./routes/lend-routes"));
@@ -18,14 +38,13 @@ fastify.register(library_routes_1.default);
 fastify.register(lend_routes_1.default);
 fastify.register(user_routes_1.default);
 fastify.register(return_routes_1.default);
-const jwt = require("jsonwebtoken");
-const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
+fastify.addHook("preHandler", (req, res, done) => {
     const token = req.headers.authorization;
     console.log("Token: ", token);
     console.log("req Params: ", req.params);
     console.log("routerPath: ", req.url);
     console.log('CONFIG: ', req.context.config);
-    console.log('req body before token data: ', req.body);
+    console.log('req body: ', req.body);
     console.log('request object: ', req);
     if (rts_1.validRouterPath.includes(req.url) && !token) {
         res.send({
@@ -65,8 +84,37 @@ const verifyToken = fastify.addHook("preHandler", (req, res, done) => {
     }
 });
 fastify.get('/healthcheck', async (req, res) => {
-    console.log(req.hostname);
-    return `Server Started Listening At ${req.hostname}`;
+    const data = {
+        bookName: req.body.bookName,
+        authorName: req.body.authorName,
+        language: req.body.language,
+        genre: req.body.genre,
+        donatedBy: req.body.donatedBy,
+        createdAt: Date(),
+    };
+    const saveBook = await fastify.db.library.save(data);
+    console.log('To Check -->', saveBook);
+    return {
+        status: "SUCCESS",
+        data: saveBook,
+        message: `Server Started Listening At ${req.hostname}`,
+    };
+});
+fastify.post('/checkroute', async (req, res) => {
+    const data = {
+        bookName: req.body.bookName,
+        authorName: req.body.authorName,
+        language: req.body.language,
+        genre: req.body.genre,
+        donatedBy: req.body.donatedBy,
+        createdAt: Date(),
+    };
+    const saveBook = await fastify.db.library.save(data);
+    console.log('To Check -->', saveBook);
+    return {
+        status: "SUCCESS",
+        data: saveBook,
+    };
 });
 fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
     if (err) {
@@ -75,6 +123,5 @@ fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
     }
     console.log(`Server started listening at ${address}`);
     console.log('registered Routes: ', fastify.printRoutes());
-    console.log(address);
 });
 //# sourceMappingURL=server.js.map

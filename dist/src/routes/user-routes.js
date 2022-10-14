@@ -1,22 +1,40 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require('bcrypt');
 const db = require("../db");
-const jwt = require("jsonwebtoken");
+const jwt = __importStar(require("jsonwebtoken"));
 function userRoutes(fastify, options, done) {
     const userRepo = fastify.db.userrecords;
-    console.log('verifying whether the control flows through User Routes');
     fastify.post("/usersignin", async (req, res) => {
-        /** const token = req.headers.authorization;
+        /**const token = req.headers.authorization;
 
-  const decodedToken = jwt.verify(token,secret_key);
+const decodedToken = jwt.verify(token,secret_key);
 
-          const user = {
-                       mailId : decodedToken.email,
-                       role :  'user',
-                       createdAt : Date(),
-                      
-          };**/
+        const user = {
+                     mailId : decodedToken.email,
+                     role :  'user',
+                     createdAt : Date(),
+                    
+        };**/
         const user = {
             mailId: req.body.mailId,
             role: 'user',
@@ -29,9 +47,6 @@ function userRoutes(fastify, options, done) {
         if (findUser == null) {
             const addUser = await userRepo.save(user);
             console.log('newly added user to db: ', addUser);
-            if (user.mailId == 'anoop@surfboard.se') {
-                const updateUser = await userRepo.update(addUser.userId, { role: 'admin' });
-            }
             token = jwt.sign({ user: addUser }, process.env.JWT, { expiresIn: "86400s" });
             console.log('auth token: ', { token });
         }

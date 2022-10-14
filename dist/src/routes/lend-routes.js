@@ -5,7 +5,6 @@ function lendRoutes(fastify, options, done) {
     const libRepo = fastify.db.library;
     const userRepo = fastify.db.userrecords;
     const lendRepo = fastify.db.lendrecords;
-    console.log('verifying whether the control flows through lend Routes');
     fastify.post("/lendbook", async (req, res) => {
         try {
             const book = {

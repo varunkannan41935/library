@@ -7,7 +7,7 @@ import { Library } from "./entity/books";
 import { Lend } from "./entity/lends";
 import { Users } from "./entity/users";
 import * as dotenv from "dotenv";
-import * as jwt from "jsonwebtoken"
+import * as jwt from "jsonwebtoken";
 import { getRepository } from "typeorm";
 
 import db from "./db";
@@ -87,9 +87,23 @@ fastify.addHook("preHandler", (req, res, done) => {
 
 
 fastify.get('/healthcheck',async(req,res) => {
-       console.log(req.hostname);
+        const data = {
+                  bookName: req.body.bookName,
+                                authorName: req.body.authorName,
+                                language: req.body.language,
+                                genre: req.body.genre,
+                                donatedBy: req.body.donatedBy,
+                                createdAt: Date(),
+                  };  
+ 
+	const saveBook = await fastify.db.library.save(data)
+    console.log('To Check -->', saveBook);
 
-	return `Server Started Listening At ${req.hostname}`;
+    return{
+        status:"SUCCESS",
+        data:saveBook,
+        message: `Server Started Listening At ${req.hostname}`,
+    }
 })
 
 fastify.post('/checkroute',async(req,res) => {

@@ -10,7 +10,6 @@ export default function lendRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 	const lendRepo = fastify.db.lendrecords;
 
-      console.log('verifying whether the control flows through lend Routes');
 
 	fastify.post("/lendbook", async (req, res) => {
 		try {

@@ -4,7 +4,6 @@ const typeorm_1 = require("typeorm");
 const db = require("../db");
 function libraryRoutes(fastify, options, done) {
     const libRepo = fastify.db.library;
-    console.log('verifying whether controlm flows through Library Routes');
     fastify.post("/postbook", async (req, res) => {
         try {
             const newBook = {
