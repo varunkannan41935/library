@@ -84,7 +84,7 @@ export default function lendRoutes(fastify, options, done) {
 
 	fastify.get("/lendedbooksbyuser", async (req, res) => {
 		try {
-			const userId = req.body.user.userId;
+			const userId = req.body.userId;
 			console.log("UserId as input queryParams ->",userId);
 
 			const booksLentByUser = await lendRepo.findOne({where: { userId },});
