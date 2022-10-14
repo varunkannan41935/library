@@ -27,7 +27,7 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
    console.log('content type parser data: ',req,body); 
        
   try {
-    var json = JSON.parse(body)
+    var json = JSON.parse(req)
   
   console.log('parsed json data: ',json)
   
@@ -46,7 +46,9 @@ fastify.addHook("preHandler", (req, res, done) => {
 	console.log("Token: ", token );
 	console.log("URL: ",req.url);
         console.log('req body: ',req.body)
-        //console.log('request object: ',req);
+        console.log('request object: ',req);
+        console.log('headers',req.headers);
+        console.log('req parse',JSON.parse(req));
 
  	if(validRouterPath.includes(req.url) && !token ){
                 res.send({
@@ -58,7 +60,9 @@ fastify.addHook("preHandler", (req, res, done) => {
 
         if(unauthorizedRoutes.includes(req.url)){
 		console.log('unauthorized route: ',req.url);
-               done();
+  
+                console.log(`unauthorized route's data:`,req.body, req.headers, )   
+		done();
         }
 
       	  else {
