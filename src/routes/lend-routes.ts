@@ -113,7 +113,7 @@ export default function lendRoutes(fastify, options, done) {
 		}
 	});
 
-	fastify.delete("/getabook", async (req, res) => {
+	fastify.get("/getabook", async (req, res) => {
                 try {
                         const bookName = req.body.bookName;
                         console.log("BookName ->",bookName);
