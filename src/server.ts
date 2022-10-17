@@ -102,10 +102,14 @@ fastify.get('/healthcheck',async(req,res) => {
 	return `Server Started Listening At ${req.hostname}`;
 });
 
-fastify.delete('/checkroute',async(req,res) => {
+fastify.put('/checkroute',async(req,res) => {
 	console.log(req);
-
-	return req.body
+        
+	return {
+		status: 'SUCCESS',
+		data: req.body,
+		message:'check Route'
+	}
        
 })
 
