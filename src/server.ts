@@ -102,17 +102,6 @@ fastify.get('/healthcheck',async(req,res) => {
 	return `Server Started Listening At ${req.hostname}`;
 });
 
-fastify.put('/checkroute',async(req,res) => {
-	console.log(req);
-        
-	return {
-		status: 'SUCCESS',
-		data: req.body,
-		message:'check Route'
-	}
-       
-})
-
 fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
 	if (err) {
 		fastify.log.error("ERROR", err);
