@@ -83,7 +83,7 @@ export default function libraryRoutes(fastify, options, done) {
 
 		try {
 			const bookName = req.body.data.bookName;
-			console.log("Query for the book updation ->", bookName);
+			console.log("bookName for the book updation ->", bookName);
 
 			if (typeof bookName !== "string" || !bookName) {
 				throw new Error("Invalid Input : Provide The Required Input For BookName");
@@ -95,7 +95,7 @@ export default function libraryRoutes(fastify, options, done) {
 				genre: req.body.data.genre,
 				donatedBy: req.body.data.donatedBy,
 			};
-			console.log(`Input's For Updation --->`, newBook.donatedBy);
+                        console.log(`Input's For Updation : `, newBook);
 
 			const findBook = await libRepo.findOne({where: { bookName: ILike( bookName) },});
 			console.log("To find the book For Updation is in the library ->",findBook);
@@ -105,11 +105,10 @@ export default function libraryRoutes(fastify, options, done) {
 			}
 
 			if (JSON.stringify(newBook) === "{}") {
-				throw new Error(
-					"Invalid Input : Provide the Required Inputs For Book Updation"
-				);
+				throw new Error("Invalid Input : Provide the Required Inputs For Book Updation");
 			}
 
+			
                         Object.entries(newBook).forEach((book) => {
                                         const [bookKey, bookValue] = book;
 
@@ -121,16 +120,12 @@ export default function libraryRoutes(fastify, options, done) {
                                                 }
                                         }
                         });
+                      
 
+			const updateBook = await libRepo.update(findBook.bookId,{ ...newBook,updatedAt:new Date() });
 
-			const updateBook = await libRepo.update(findBook.bookId,{ ...newBook, createdAt:new Date() });
-
-                        const updatedBook = await libRepo.findOne({where:{bookName , donatedBy : newBook.donatedBy}})
-                        console.log('updated book --->',updatedBook);
-                       
 			return {
 				status: "SUCCESS",
-                                updatedData: updatedBook,
 				message: `The Book ${bookName} Updated successfully`,
 			};
                         

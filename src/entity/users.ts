@@ -12,7 +12,7 @@ export class Users {
   @Column()
   role: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({type: 'timestamp'})
   createdAt: Date;
 
   @Column({nullable : true, default : 0})

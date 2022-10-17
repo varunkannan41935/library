@@ -2,7 +2,7 @@ export const routes = [
                 "/getusers",
                 "/deleteuser",
                 "/postbook",
-                "/getallbooks",
+                //"/getallbooks",
                 "/updatebook",
                 "/deletebook",
                 "/getbookbyquery",
@@ -19,6 +19,7 @@ export const unauthorizedRoutes = [
                 "/usersignin",
 		"/healthcheck",
 		"/getallbooks",
+		"/checkroute",
         ];
 
 export const adminRoutes = [

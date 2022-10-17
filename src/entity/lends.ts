@@ -15,10 +15,10 @@ export class Lend {
   @Column()
   mailId:string
 
-  @Column()
+  @Column({type: 'timestamp'})
   lendDate: Date;
 
-  @Column({default: null})
+  @Column({default: null, type: 'timestamp'})
   returnDate: Date;
 
   @Column({default:false})

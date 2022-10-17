@@ -23,8 +23,9 @@ export class Library {
   @Column()
   donatedBy: string;
 
-
-  @CreateDateColumn()
+  @CreateDateColumn({type: 'timestamp'})
   createdAt: Date;
 
+  @Column({type: 'timestamp', nullable : true, default : null})
+  updatedAt: Date;
 }
