@@ -8,7 +8,7 @@ export const validRouterPath = [
                 "/getbookbyquery",
                 "/lendbook",
                 "/getlendedbooks",
-                "/lendedbooksbyuser",
+                //"/lendedbooksbyuser",
                 "/returnbook",
                 "/getreturnedbooks",
                 "/getbooksreturnedbyuser",
@@ -22,7 +22,9 @@ export const unauthorizedRoutes = [
 		"/checkroute",
 		"/postbook",
 		"/getallbooks",
-		"/postnewbook"
+		"/postnewbook",
+		"/lendedbooksbyuser",
+		"/getabook"
         ];
 
 export const adminRoutes = [

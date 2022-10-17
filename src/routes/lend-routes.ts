@@ -84,7 +84,7 @@ export default function lendRoutes(fastify, options, done) {
 
 	fastify.get("/lendedbooksbyuser", async (req, res) => {
 		try {
-			const userId = req.body.userId;
+			const userId = req.body.data.userId;
 			console.log("UserId as input queryParams ->",userId);
 
 			const booksLentByUser = await lendRepo.findOne({where: { userId },});
@@ -112,6 +112,32 @@ export default function lendRoutes(fastify, options, done) {
 			};
 		}
 	});
+
+	fastify.delete("/getabook", async (req, res) => {
+                try {
+                        const bookName = req.body.bookName;
+                        console.log("BookName ->",bookName);
+
+                        const books = await libRepo.findOne({where: { bookName },});
+                        console.log("Total Books ->",books);
+
+                        if (books != null) {
+                                        return {
+                                                status: "SUCCESS",
+                                                data: books,bookName,
+                                                message: "Book Found successfully",
+                                        };
+                                } else {
+                                        throw new Error("The Book Not Found");
+                                }
+                } catch (e) {
+                        return {
+                                status: "ERROR",
+                                data: req.body,
+                                message: e.message,
+                        };
+                }
+        });
 
 	done();
 }

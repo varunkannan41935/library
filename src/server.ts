@@ -57,7 +57,7 @@ fastify.addHook("preHandler", (req, res, done) => {
 
 		console.log('unauthorized route : ',req.url);
   
-                console.log(`unauthorized route's data:`,req.body, req.headers, )   
+                console.log(`unauthorized route's data:`,req.body, req.query, req.params )   
 		done();
         }
 
@@ -100,27 +100,6 @@ fastify.get('/healthcheck',async(req,res) => {
 
 	return `Server Started Listening At ${req.hostname}`;
 })
-
-fastify.post('/checkroute',async(req,res) => {
-     const data = {
-                  bookName: req.body.bookName,
-                  authorName: req.body.authorName,
-                  language: req.body.language,
-                  genre: req.body.genre,
-                  donatedBy: req.body.donatedBy,
-                  createdAt: Date(),
-                  };
-
-    const saveBook = await fastify.db.library.save(data)
-    console.log('To Check -->', saveBook);
- 
-    return{
-        status:"SUCCESS",
-	data:saveBook,
-    }    
-
-});
-
 
 fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
 	if (err) {

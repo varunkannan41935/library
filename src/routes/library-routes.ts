@@ -206,6 +206,6 @@ export default function libraryRoutes(fastify, options, done) {
 			};
 		}
 	});
- 
+
 	done();
 }
