@@ -23,15 +23,15 @@ fastify.register(lendRoutes);
 fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
-fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-   console.log('content type parser data --------: ',req, body); 
+/*fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
+   console.log('content type parser data : ',req, body); 
        
     var json = JSON.parse(body)
   
   console.log('parsed json data: ',json)
   
     done(null, json)
-})
+})*/
 
 
 fastify.addHook("preHandler", (req, res, done) => {
@@ -41,7 +41,7 @@ fastify.addHook("preHandler", (req, res, done) => {
 	console.log("Token: ", token );
 	console.log("URL: ",req.url);
         console.log('req body: ',req.body)
-        //console.log('request object: ',req);
+        console.log('request object: ',req);
         console.log('headers',req.headers);
  	
 	if(routes.includes(req.url) && !token ){
@@ -56,7 +56,6 @@ fastify.addHook("preHandler", (req, res, done) => {
 
 
 		console.log('unauthorized route : ',req.url);
-  
                 console.log(`unauthorized route's data:`,req.body, req.query, req.params )   
 		done();
         }
@@ -64,7 +63,8 @@ fastify.addHook("preHandler", (req, res, done) => {
       	  else {
 		
 		console.log("Token: ", {token});
-            
+                console.log('prehandler req Object: ',req);
+		console.log('request url: ',req.url)
 		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
                                 if (err)
                                 return false;
@@ -100,6 +100,13 @@ fastify.get('/healthcheck',async(req,res) => {
        console.log(req.hostname);
 
 	return `Server Started Listening At ${req.hostname}`;
+});
+
+fastify.delete('/checkroute',async(req,res) => {
+	console.log(req);
+
+	return req.body
+       
 })
 
 fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
