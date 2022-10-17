@@ -1,21 +1,21 @@
 import { getRepository } from "typeorm";
 import {ILike} from "typeorm";
 import { Library } from "../entity/books";
-const db = require("../db");
-import { In } from "typeorm";
+import db from "../db";
 
 export default function libraryRoutes(fastify, options, done) {
 	const libRepo = fastify.db.library;
 
-	fastify.post("/postbook", async (req, res) => {
+	fastify.post("/postnewbook", async (req, res) => {
+                
+                console.log('Incoming Request object: ',req);
 		try {
 			const newBook = {
-				bookName: req.body.bookName,
-				authorName: req.body.authorName,
-				language: req.body.language,
-				genre: req.body.genre,
-				donatedBy: req.body.donatedBy,
-			    	createdAt: Date(),
+				bookName: req.body.data.bookName,
+				authorName: req.body.data.authorName,
+				language: req.body.data.language,
+				genre: req.body.data.genre,
+				donatedBy: req.body.data.donatedBy,
 			};
 			console.log("Input Data To Post A Book ->", newBook);
                          
@@ -56,6 +56,9 @@ export default function libraryRoutes(fastify, options, done) {
 
 
 	fastify.get("/getallbooks", async (req, res) => {
+
+                console.log('Incoming Request object: ',req);
+
 		const getBooks = await libRepo.find();
 		console.log("Getting Available books from the Library ",getBooks);
 
@@ -75,6 +78,9 @@ export default function libraryRoutes(fastify, options, done) {
 	});
 
 	fastify.put("/updatebook", async (req, res) => {
+
+                    console.log('Incoming Request object: ',req);
+
 		try {
 			const bookName = req.body.data.bookName;
 			console.log("Query for the book updation ->", bookName);
@@ -139,6 +145,9 @@ export default function libraryRoutes(fastify, options, done) {
 	});
 
 	fastify.delete("/deletebook", async (req, res) => {
+		
+		console.log('Incoming Request object: ',req);
+
 		try {
 			const bookName  = req.query.bookName;
 			console.log("Input Query For Book Deletion --->", bookName);
@@ -169,24 +178,26 @@ export default function libraryRoutes(fastify, options, done) {
 	});
 
 	fastify.get("/getbookbyquery", async (req, res) => {
+		
+		console.log('Incoming Request object: ',req);
+
 		try {
 			const queryParams = {
 				bookName: req.query.bookName,
 				authorName: req.query.authorName,
 				language: req.query.language,
 				genre: req.query.genre,
-				availability: req.query.availability,
 				donatedBy: req.query.donatedBy,
 			};
-
-			console.log("queryParams to get book from library -> ",queryParams);
 
 			if (JSON.stringify(queryParams) === "{}") {
 				throw new Error("Invalid Input : Provide the Required Inputs");
 			}
+                     
+			const query = JSON.stringify(queryParams)
+                        console.log("queryParams to get book from library -> ",query);
 
-
-			const book = await libRepo.find({where: { ...queryParams } } );
+			const book = await libRepo.find( query );
 			console.log("Requested Book --->", book);
 
 			if (book.length == 0) {

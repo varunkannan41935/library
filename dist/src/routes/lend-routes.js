@@ -12,7 +12,6 @@ function lendRoutes(fastify, options, done) {
                 bookName: req.body.data.bookName,
                 mailId: req.body.user.mailId,
                 lendDate: Date(),
-                returnDate: "Not Returned",
             };
             console.log("Input To lend a book ->", book);
             Object.entries(book).forEach((entry) => {
@@ -68,7 +67,7 @@ function lendRoutes(fastify, options, done) {
     });
     fastify.get("/lendedbooksbyuser", async (req, res) => {
         try {
-            const userId = req.body.user.userId;
+            const userId = req.body.data.userId;
             console.log("UserId as input queryParams ->", userId);
             const booksLentByUser = await lendRepo.findOne({ where: { userId }, });
             console.log("Total Books lend by particular user ->", booksLentByUser);
@@ -93,6 +92,31 @@ function lendRoutes(fastify, options, done) {
             return {
                 status: "ERROR",
                 data: null,
+                message: e.message,
+            };
+        }
+    });
+    fastify.get("/getabook", async (req, res) => {
+        try {
+            const bookName = req.body.bookName;
+            console.log("BookName ->", bookName);
+            const books = await libRepo.findOne({ where: { bookName }, });
+            console.log("Total Books ->", books);
+            if (books != null) {
+                return {
+                    status: "SUCCESS",
+                    data: books, bookName,
+                    message: "Book Found successfully",
+                };
+            }
+            else {
+                throw new Error("The Book Not Found");
+            }
+        }
+        catch (e) {
+            return {
+                status: "ERROR",
+                data: req.body,
                 message: e.message,
             };
         }

@@ -23,7 +23,8 @@ exports.unauthorizedRoutes = [
     "/checkroute",
     "/postbook",
     "/getallbooks",
-    "/postnewbook"
+    "/postnewbook",
+    "/getabook"
 ];
 exports.adminRoutes = [
     //"/postbook",

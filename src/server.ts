@@ -15,7 +15,7 @@ import libraryRoutes from "./routes/library-routes";
 import lendRoutes from "./routes/lend-routes";
 import userRoutes from "./routes/user-routes";
 import returnRoutes from "./routes/return-routes";
-import { validRouterPath, unauthorizedRoutes, adminRoutes } from "./rts"
+import { routes, unauthorizedRoutes, adminRoutes } from "./rts"
 
 fastify.register(db);
 fastify.register(libraryRoutes);
@@ -24,7 +24,7 @@ fastify.register(userRoutes);
 fastify.register(returnRoutes);
 
 fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-   console.log('content type parser data --------: ',req,body); 
+   console.log('content type parser data --------: ',req, body); 
        
     var json = JSON.parse(body)
   
@@ -44,7 +44,7 @@ fastify.addHook("preHandler", (req, res, done) => {
         //console.log('request object: ',req);
         console.log('headers',req.headers);
  	
-	if(validRouterPath.includes(req.url) && !token ){
+	if(routes.includes(req.url) && !token ){
                 res.send({
                         statuscode: 500,
                         error: 'Missing JWT Token',
@@ -79,12 +79,13 @@ fastify.addHook("preHandler", (req, res, done) => {
 			})
 
                 var decodedUser = decoded.user;
-                const role = decoded.user.role;
+                console.log("User: ",decodedUser);
+
+		const role = decoded.user.role;
                 const payload = {};
                 req.body = Object.assign(payload, {data: req.body}, {user: decodedUser}, );     
   
                 console.log('req body after adding token data: ',req.body)
-                console.log("User: ",decodedUser);
                  
                if(adminRoutes.includes(req.url) && role == 'user'){
 

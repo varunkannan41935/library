@@ -17,14 +17,14 @@ export class Library {
   @Column()
   genre: string;
 
-  @Column( {default: 'available'})
-  availability: string;
+  @Column( {default: true})
+  available: boolean;
 
   @Column()
   donatedBy: string;
 
 
-  @Column()
-  createdAt: string;
+  @CreateDateColumn()
+  createdAt: Date;
 
 }

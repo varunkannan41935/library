@@ -16,11 +16,10 @@ export class Lend {
   mailId:string
 
   @Column()
-  lendDate: string;
+  lendDate: Date;
 
-  @Column()
-  returnDate: string;
-  
+  @Column({default: null})
+  returnDate: Date;
 
   @Column({default:false})
   returned:boolean;

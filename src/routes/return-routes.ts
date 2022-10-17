@@ -3,7 +3,7 @@ import { Lend } from "../entity/lends";
 import { Users } from "../entity/users";
 import { Library } from "../entity/books";
 import { RequestGenericInterface } from "fastify";
-const db = require("../db");
+import db from "../db";
 
 export default function returnRoutes(fastify, options, done) {
 	const lendRepo = fastify.db.lendrecords;
@@ -11,6 +11,9 @@ export default function returnRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
 	fastify.post("/returnbook", async (req, res) => {
+		
+		console.log('Incoming Request object: ',req);
+
 		try {
 			const bookName = req.body.data.bookName;
 
@@ -40,7 +43,7 @@ export default function returnRoutes(fastify, options, done) {
          
                               const updateStatus = await lendRepo.update(lendInfo.lendId,{returnDate: Date(), returned : true});
     
-                              const updateAvailability = await libRepo.update(findBook.bookId, {availability : "available" })
+                              const updateAvailability = await libRepo.update(findBook.bookId, {available : true })
                                
                               return {
                                       status: "SUCCESS",
@@ -70,6 +73,9 @@ export default function returnRoutes(fastify, options, done) {
 	});
 
 	fastify.get("/getreturnedbooks", async (req, res) => {
+		
+		console.log('Incoming Request object: ',req);
+
 		const getReturnedBooks = await lendRepo.find({where: { returned: true }});
 		console.log("TO CHECK THE RETUEN RECORD ->", getReturnedBooks);
 
@@ -89,6 +95,9 @@ export default function returnRoutes(fastify, options, done) {
 	});
 
 	fastify.get("/getbooksreturnedbyuser", async (req, res) => {
+		
+		console.log('Incoming Request object: ',req);
+
 		try {
 			const userId = req.body.user.userId;
 			console.log("To Check The Input ->", userId);

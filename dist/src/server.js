@@ -49,9 +49,8 @@ fastify.addHook("preHandler", (req, res, done) => {
     console.log("Token: ", token);
     console.log("URL: ", req.url);
     console.log('req body: ', req.body);
-    console.log('request object: ', req);
+    //console.log('request object: ',req);
     console.log('headers', req.headers);
-    console.log('req parse', JSON.parse(req));
     if (rts_1.validRouterPath.includes(req.url) && !token) {
         res.send({
             statuscode: 500,
@@ -60,13 +59,12 @@ fastify.addHook("preHandler", (req, res, done) => {
         });
     }
     if (rts_1.unauthorizedRoutes.includes(req.url)) {
-        console.log('unauthorized route -----------------------------------------------------: ', req.url);
-        console.log(`unauthorized route's data-----------------------------------------------:`, req.body, req.headers);
+        console.log('unauthorized route : ', req.url);
+        console.log(`unauthorized route's data:`, req.body, req.query, req.params);
         done();
     }
     else {
         console.log("Token: ", { token });
-        console.log("------------------------------------");
         const decoded = jwt.verify(token, process.env.JWT, (err, decoded) => {
             if (err)
                 return false;
@@ -93,22 +91,6 @@ fastify.addHook("preHandler", (req, res, done) => {
 fastify.get('/healthcheck', async (req, res) => {
     console.log(req.hostname);
     return `Server Started Listening At ${req.hostname}`;
-});
-fastify.post('/checkroute', async (req, res) => {
-    const data = {
-        bookName: req.body.bookName,
-        authorName: req.body.authorName,
-        language: req.body.language,
-        genre: req.body.genre,
-        donatedBy: req.body.donatedBy,
-        createdAt: Date(),
-    };
-    const saveBook = await fastify.db.library.save(data);
-    console.log('To Check -->', saveBook);
-    return {
-        status: "SUCCESS",
-        data: saveBook,
-    };
 });
 fastify.listen(process.env.PORT || 3001, '0.0.0.0', function (err, address) {
     if (err) {

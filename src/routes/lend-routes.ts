@@ -3,7 +3,7 @@ import { Library } from "../entity/books";
 import { Lend } from "../entity/lends";
 import { Users } from "../entity/users";
 import { RequestGenericInterface } from "fastify";
-const db = require("../db");
+import db from "../db";
 
 export default function lendRoutes(fastify, options, done) {
 	const libRepo = fastify.db.library;
@@ -12,14 +12,15 @@ export default function lendRoutes(fastify, options, done) {
 
 
 	fastify.post("/lendbook", async (req, res) => {
+                console.log('Incoming Request object: ',req);
+
 		try {
 
 			const book = {
 				userId: req.body.user.userId,
 				bookName: req.body.data.bookName,
 				mailId: req.body.user.mailId,
-                                lendDate: Date(),
-                                returnDate: "Not Returned",
+				lendDate: req.body.data.landDate
 			};
 			console.log("Input To lend a book ->", book);
 
@@ -39,12 +40,12 @@ export default function lendRoutes(fastify, options, done) {
 				throw new Error(`The Requested Book ${book.bookName} Is Not Available In The Library`);
 			}
 
-			if (findBook != null && findBook.availability === 'available') {
+			if (findBook != null && findBook.available === true) {
 			
 					const lendBook = await lendRepo.save(book);
 
-	 				const updatedBook =await libRepo.update(findBook.bookId,{availability:"not available"});
-                                        console.log('update availability',updatedBook.availability);      
+	 				const updatedBook =await libRepo.update(findBook.bookId,{available:false});
+                                        console.log('update availability',updatedBook.available);      
 
 					return {
 						status: "SUCCESS",
@@ -64,6 +65,9 @@ export default function lendRoutes(fastify, options, done) {
 	});
 
 	fastify.get("/getlendedbooks", async (req, res) => {
+                
+                console.log('Incoming Request object: ',req); 
+
 		const getLendedBooks = await lendRepo.find({where: { returned: false }});
 		console.log("Check the Lent books ->", getLendedBooks);
 
@@ -84,25 +88,23 @@ export default function lendRoutes(fastify, options, done) {
 
 	fastify.get("/lendedbooksbyuser", async (req, res) => {
 		try {
+
+                        console.log('Incoming Request object: ',req);
+                        
 			const userId = req.body.data.userId;
 			console.log("UserId as input queryParams ->",userId);
 
-			const booksLentByUser = await lendRepo.findOne({where: { userId },});
+			const booksLentByUser = await lendRepo.findOne({where: { userId, returned: false }});
 			console.log("Total Books lend by particular user ->",booksLentByUser);
 
 			if (booksLentByUser != null) {
-				const lendBooks = await lendRepo.findOne({where: { userId, returned: false },});
-				if (lendBooks != null) {
 					return {
 						status: "SUCCESS",
 						data: booksLentByUser,
 						message: "The Total Lent Books By user Found successfully",
 					};
-				} else {
-					throw new Error("The User Returned Every Books");
-				}
 			} else {
-				throw new Error("The User Does Not Lend Any Books");
+				throw new Error("The User Does Not Lend Any Books / returned every lended books");
 			}
 		} catch (e) {
 			return {
@@ -112,32 +114,6 @@ export default function lendRoutes(fastify, options, done) {
 			};
 		}
 	});
-
-	fastify.get("/getabook", async (req, res) => {
-                try {
-                        const bookName = req.body.bookName;
-                        console.log("BookName ->",bookName);
-
-                        const books = await libRepo.findOne({where: { bookName },});
-                        console.log("Total Books ->",books);
-
-                        if (books != null) {
-                                        return {
-                                                status: "SUCCESS",
-                                                data: books,bookName,
-                                                message: "Book Found successfully",
-                                        };
-                                } else {
-                                        throw new Error("The Book Not Found");
-                                }
-                } catch (e) {
-                        return {
-                                status: "ERROR",
-                                data: req.body,
-                                message: e.message,
-                        };
-                }
-        });
 
 	done();
 }

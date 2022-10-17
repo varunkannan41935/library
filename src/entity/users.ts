@@ -12,8 +12,8 @@ export class Users {
   @Column()
   role: string;
 
-  @Column()
-  createdAt: string;
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column({nullable : true, default : 0})
   visitCount: number;

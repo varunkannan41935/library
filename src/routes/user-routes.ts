@@ -3,14 +3,16 @@ import { Users } from "../entity/users";
 import { RequestGenericInterface } from "fastify";
 import * as dotenv from 'dotenv';
 const bcrypt = require('bcrypt');
-const db = require("../db");
+import db from "../db";
 import * as jwt from "jsonwebtoken";
 
 export default function userRoutes(fastify, options, done) {
 	const userRepo = fastify.db.userrecords;
 
 	fastify.post("/usersignin", async (req, res) => {
-	
+
+               console.log('Incoming Request object: ',req);
+
                 /**const token = req.headers.authorization; 
   
  		const decodedToken = jwt.verify(token,secret_key);
@@ -25,7 +27,6 @@ export default function userRoutes(fastify, options, done) {
                 const user = {
                              mailId: req.body.mailId,
                              role: 'user',
-                             createdAt : Date(),
                 };
                 console.log('USER', user)                    
                 let token = {};
@@ -61,6 +62,8 @@ export default function userRoutes(fastify, options, done) {
 
         fastify.get("/getusers", async (req,res) => {
                       
+		console.log('Incoming Request object: ',req)
+
                 const findUsers = await userRepo.find();
                 console.log('AVAILABLE USERS --->',findUsers);
 
@@ -76,38 +79,5 @@ export default function userRoutes(fastify, options, done) {
 
         });
    
-        fastify.delete("/deleteuser", async(req,res) => {
- 
-                try{
-                   const mailId = req.query.mailId;
-                   console.log('user to be deleted --->',mailId);                
-
-   
-                   if (!mailId || typeof mailId != "string") {
-				throw new Error("Invalid Input : Provide Required Input");
-			}
-
-			const findUser = await userRepo.findOne({where: { mailId }});
-			console.log("To Find The User ->", findUser);
-
-			if (findUser != null) {
-				const deleteUser = await userRepo.delete({mailId});
-				return {
-					status: "SUCCESS",
-					data: findUser,
-					message: `The User ${findUser.mailId} Deleted Successfully`,
-				};
-			} else {
-				throw new Error("User Not Found");
-			}
-		} catch (e) {
-			return {
-				status: "ERROR",
-				data: null,
-				message: e.message,
-			};
-		}
-	});
-
 	done();
 }
