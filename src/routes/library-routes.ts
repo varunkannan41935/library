@@ -17,9 +17,8 @@ export default function libraryRoutes(fastify, options, done) {
 				genre: req.body.data.genre,
 				donatedBy: req.body.data.donatedBy,
 			};
-			console.log("Input Data To Post A Book ->", newBook);
-                         
-                    
+			console.log("Input Data To Post A Book: ", newBook);
+
                         Object.entries(newBook).forEach((book) => {
                                 const [bookKey,bookValue] = book;
                                
@@ -28,14 +27,14 @@ export default function libraryRoutes(fastify, options, done) {
                                 } 
   
                         });
-                       
+
 			const getBook = await libRepo.findOne({where: { bookName: ILike(newBook.bookName)}});
-			console.log("To Check Whether The Book Is Already In The library -->",getBook);
+			console.log("To Check Whether The Book Is Already In The library: ",getBook);
 
 			if (getBook == null) {
 
 				const postBook = await libRepo.save(newBook);
-				console.log("New Book posted in the library -> ",postBook);
+				console.log("New Book posted in the library: ",postBook);
 
 				return {
 					status: "SUCCESS",
@@ -60,7 +59,7 @@ export default function libraryRoutes(fastify, options, done) {
                 console.log('Incoming Request object: ',req);
 
 		const getBooks = await libRepo.find();
-		console.log("Getting Available books from the Library ",getBooks);
+		console.log("Getting Available books from the Library: ",getBooks);
 
 		if (getBooks.length != 0) {
 			return {
@@ -83,7 +82,7 @@ export default function libraryRoutes(fastify, options, done) {
 
 		try {
 			const bookName = req.body.data.bookName;
-			console.log("bookName for the book updation ->", bookName);
+			console.log("bookName for the book updation: ", bookName);
 
 			if (typeof bookName !== "string" || !bookName) {
 				throw new Error("Invalid Input : Provide The Required Input For BookName");
@@ -145,7 +144,7 @@ export default function libraryRoutes(fastify, options, done) {
 
 		try {
 			const bookName  = req.query.bookName;
-			console.log("Input Query For Book Deletion --->", bookName);
+			console.log("Input Query For Book Deletion: ", bookName);
 
 			if (typeof bookName != "string") {
 				throw new Error("Invalid Input : Provide Required Input");
@@ -184,16 +183,15 @@ export default function libraryRoutes(fastify, options, done) {
 				genre: req.query.genre,
 				donatedBy: req.query.donatedBy,
 			};
+                        console.log("queryParams to get book from library: ",queryParams);
 
 			if (JSON.stringify(queryParams) === "{}") {
 				throw new Error("Invalid Input : Provide the Required Inputs");
 			}
-                     
-			const query = JSON.stringify(queryParams)
-                        console.log("queryParams to get book from library -> ",query);
 
-			const book = await libRepo.find( query );
-			console.log("Requested Book --->", book);
+
+			const book = await libRepo.find({where: {...queryParams}});
+			console.log("Requested Book: ", book);
 
 			if (book.length == 0) {
 				throw new Error(`The Request Is Not Available`);

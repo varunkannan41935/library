@@ -41,9 +41,10 @@ fastify.addHook("preHandler", (req, res, done) => {
 	console.log("Token: ", token );
 	console.log("URL: ",req.url);
         console.log('req body: ',req.body)
-        console.log('request object: ',req);
+        //console.log('request object: ',req);
         console.log('headers',req.headers);
- 	
+        console.log('payload:',req.payload);
+
 	if(routes.includes(req.url) && !token ){
                 res.send({
                         statuscode: 500,
