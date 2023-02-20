@@ -64,7 +64,7 @@ fastify.addHook("preHandler", (req, res, done) => {
       	  else {
 		
 		console.log("Token: ", {token});
-                console.log('prehandler req Object: ',req);
+                //console.log('prehandler req Object: ',req);
 		console.log('request url: ',req.url)
 		const decoded = jwt.verify(token,process.env.JWT, (err, decoded) => {
                                 if (err)

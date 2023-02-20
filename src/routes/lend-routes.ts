@@ -12,18 +12,16 @@ export default function lendRoutes(fastify, options, done) {
 
 
 	fastify.post("/lendbook", async (req, res) => {
-                console.log('Incoming Request object: ',req);
-
 		try {
 
 			const book = {
 				userId: req.body.user.userId,
 				bookName: req.body.data.bookName,
 				mailId: req.body.user.mailId,
-				lendDate: req.body.data.landDate
+				lendDate: req.body.data.lendDate
 			};
 			console.log("Input To lend a book ->", book);
-
+                        console.log("DATE: ",new Date()); 
 
 			Object.entries(book).forEach((entry) => {
 				const [bookKey, bookValue] = entry;
